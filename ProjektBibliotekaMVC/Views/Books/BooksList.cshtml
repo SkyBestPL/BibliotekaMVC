@@ -1,0 +1,37 @@
+﻿@model IEnumerable<BibliotekaMVC.Entities.BookEntity>
+
+@{
+    ViewData["Title"] = "BooksList";
+}
+
+<h1 class="margin-bottom-small text-center">Nasze Książki</h1>
+
+<ul class="book-list-2">
+    @foreach (var item in Model)
+    {
+        <li class="book-item">
+            <div class="book-info">
+                <div>
+                    <p><strong>@Html.DisplayFor(modelItem => item.Title)</strong></p>
+                    <p>Opis książki: <br> @Html.DisplayFor(modelItem => item.Contents)</p>
+                    <p>Autor: @Html.DisplayFor(modelItem => item.IdAuthor)</p>
+                    <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCathegory)</p>
+                    <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
+                    @if (item.Status != "taken")
+                    {
+                        <button class="button-tocart" onclick="addToCart('@item.Id')">Dodaj do koszyka</button>
+                    }
+                    else
+                    {
+                        <button disabled style="background-color: grey; cursor: not-allowed;">Niedostępne</button>
+                    }
+                </div>
+            </div>
+            <div class="book-image">
+                <img src="@Url.Content("~/Images/" + item.Title + ".png")" alt="Obrazek książki" style="max-width: 100%; max-height: 100%;">
+            </div>
+        </li>
+    }
+</ul>
+
+
