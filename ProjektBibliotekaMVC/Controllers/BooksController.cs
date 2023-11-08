@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BibliotekaMVC.Entities;
 using ProjektBibliotekaMVC.Data;
+using ProjektBibliotekaMVC.Models;
 
 namespace BibliotekaMVC.Controllers
 {
@@ -63,7 +63,7 @@ namespace BibliotekaMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] BookEntity bookEntity)
+        public async Task<IActionResult> Create([Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] Book bookEntity)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace BibliotekaMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] BookEntity bookEntity)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] Book bookEntity)
         {
             if (id != bookEntity.Id)
             {
