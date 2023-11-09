@@ -54,9 +54,9 @@ namespace ProjektBibliotekaMVC.Data
                 .HasPrincipalKey(e => e.Id)
                 .IsRequired();
             modelBuilder.Entity<Book>()
-                .HasOne(e => e.Cart)
+                .HasMany(e => e.Carts)
                 .WithOne(e => e.Book)
-                .HasForeignKey<Cart>(e => e.Id)
+                .HasForeignKey(e => e.Id)
                 .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.Carts)
