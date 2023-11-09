@@ -26,57 +26,57 @@ namespace ProjektBibliotekaMVC.Data
             modelBuilder.Entity<Book>()
                 .HasMany(e => e.BorrowsHistory)
                 .WithOne(e => e.Book)
-                .HasForeignKey(e => e.Id)
+                .HasForeignKey(e => e.IdBook)
                 .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.BorrowsHistory)
                 .WithOne(e => e.User)
-                .HasPrincipalKey(e => e.Id)
+                .HasForeignKey(e => e.IdUser)
                 .IsRequired();
             modelBuilder.Entity<Book>()
                 .HasMany(e => e.BookCopies)
                 .WithOne(e => e.Book)
-                .HasForeignKey(e => e.Id)
+                .HasForeignKey(e => e.IdBook)
                 .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.BorrowsHistory)
                 .WithOne(e => e.User)
-                .HasPrincipalKey(e => e.Id)
+                .HasForeignKey(e => e.IdUser)
                 .IsRequired();
             modelBuilder.Entity<BookCopy>()
                 .HasOne(e => e.Borrow)
                 .WithOne(e => e.BookCopy)
-                .HasForeignKey<Borrow>(e => e.Id)
+                .HasForeignKey<Borrow>(e => e.IdBookCopy)
                 .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.Borrows)
                 .WithOne(e => e.User)
-                .HasPrincipalKey(e => e.Id)
+                .HasForeignKey(e => e.IdUser)
                 .IsRequired();
             modelBuilder.Entity<Book>()
                 .HasMany(e => e.Carts)
                 .WithOne(e => e.Book)
-                .HasForeignKey(e => e.Id)
+                .HasForeignKey(e => e.IdBook)
                 .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.Carts)
                 .WithOne(e => e.User)
-                .HasPrincipalKey(e => e.Id)
+                .HasForeignKey(e => e.IdUser)
                 .IsRequired();
             modelBuilder.Entity<Book>()
                 .HasMany(e => e.SearchesHistory)
                 .WithOne(e => e.Book)
-                .HasForeignKey(e => e.Id)
+                .HasForeignKey(e => e.IdBook)
                 .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.SearchesHistory)
                 .WithOne(e => e.User)
-                .HasPrincipalKey(e => e.Id)
+                .HasForeignKey(e => e.IdUser)
                 .IsRequired();
             modelBuilder.Entity<Category>()
                 .HasMany(e => e.ChildCategories)
                 .WithOne(e => e.ParentCategory)
-                .HasForeignKey(e => e.Id);
+                .HasForeignKey(e => e.IdParentCategory);
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Book> Books { get; set; }

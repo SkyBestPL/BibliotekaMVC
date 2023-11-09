@@ -6,6 +6,7 @@ namespace ProjektBibliotekaMVC.Models
     {
         [Key]
         public int Id { get; set; }
+        public int IdBook { get; set; }
         [Required]
         public string Status { get; set; }
         public Book Book { get; set; }
