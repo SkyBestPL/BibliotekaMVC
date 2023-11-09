@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjektBibliotekaMVC.Data;
 
@@ -11,9 +12,11 @@ using ProjektBibliotekaMVC.Data;
 namespace ProjektBibliotekaMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231109192318_done2")]
+    partial class done2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,15 +27,15 @@ namespace ProjektBibliotekaMVC.Migrations
 
             modelBuilder.Entity("BookTag", b =>
                 {
+                    b.Property<int>("IdBook")
+                        .HasColumnType("int");
+
                     b.Property<int>("IdTag")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdPost")
-                        .HasColumnType("int");
+                    b.HasKey("IdBook", "IdTag");
 
-                    b.HasKey("IdTag", "IdPost");
-
-                    b.HasIndex("IdPost");
+                    b.HasIndex("IdTag");
 
                     b.ToTable("BookTag");
                 });
@@ -484,7 +487,7 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", null)
                         .WithMany()
-                        .HasForeignKey("IdPost")
+                        .HasForeignKey("IdBook")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -598,8 +601,8 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Cart", b =>
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", "Book")
-                        .WithMany("Carts")
-                        .HasForeignKey("Id")
+                        .WithOne("Cart")
+                        .HasForeignKey("ProjektBibliotekaMVC.Models.Cart", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -669,7 +672,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.Navigation("BorrowsHistory");
 
-                    b.Navigation("Carts");
+                    b.Navigation("Cart");
 
                     b.Navigation("Queues");
 
