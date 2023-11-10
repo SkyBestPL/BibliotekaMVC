@@ -142,10 +142,9 @@ namespace ProjektBibliotekaMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
-        public async Task<IActionResult> Edit(int id, [Bind("IdBookCopy,IdBook,Status,NewStatus")] BookCopyInputModel bookCopyAmount)
+        public async Task<IActionResult> Edit(int id, [Bind("IdBookCopy,IdBook,Status,NewStatus,Email")] BookCopyInputModel bookCopyAmount)
         {
             var bookCopy = _context.BooksCopies.FirstOrDefault(b => b.Id == bookCopyAmount.IdBookCopy);
-            bookCopy.Status = bookCopyAmount.NewStatus;
             if (id != bookCopy.Id)
             {
                 return NotFound();
@@ -155,8 +154,7 @@ namespace ProjektBibliotekaMVC.Controllers
             {
                 try
                 {
-                    _context.Update(bookCopy);
-                    await _context.SaveChangesAsync();
+                    var user = _context.Users.FirstOrDefault(u => u.Email == (string)bookCopyAmount.Email);
                     if (bookCopyAmount.Status != bookCopyAmount.NewStatus)
                     {
                         if (bookCopyAmount.NewStatus == SD.BookInMagazine)
@@ -165,10 +163,24 @@ namespace ProjektBibliotekaMVC.Controllers
                         }
                         else if (bookCopyAmount.NewStatus == SD.BookIsWaiting)
                         {
+                            if (user == null)
+                                return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
+                            var waitingBook = new WaitingBook();
+                            waitingBook.IdUser = user.Id;
+                            waitingBook.IdBookCopy = bookCopy.Id;
+                            waitingBook.Date = DateTime.Now;
+                            _context.Add(waitingBook);
                             book.WaitingCount++;
                         }
                         else if (bookCopyAmount.NewStatus == SD.BookIsBorrowed)
                         {
+                            if (user == null)
+                                return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
+                            var borrow = new Borrow();
+                            borrow.IdUser = user.Id;
+                            borrow.IdBookCopy = bookCopy.Id;
+                            borrow.Date = DateTime.Now;
+                            _context.Add(borrow);
                             book.BorrowedCount++;
                         }
 
@@ -178,13 +190,23 @@ namespace ProjektBibliotekaMVC.Controllers
                         }
                         else if (bookCopyAmount.Status == SD.BookIsWaiting)
                         {
+                            if (user == null)
+                                return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
+                            var waitingBook = _context.WaitingBook.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
+                            _context.Remove(waitingBook);
                             book.WaitingCount--;
                         }
                         else if (bookCopyAmount.Status == SD.BookIsBorrowed)
                         {
+                            if (user == null)
+                                return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
+                            var borrow = _context.Borrows.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
+                            _context.Remove(borrow);
                             book.BorrowedCount--;
                         }
                     }
+                    bookCopy.Status = bookCopyAmount.NewStatus;
+                    _context.Update(bookCopy);
                     _context.Update(book);
                     await _context.SaveChangesAsync();
                 }
@@ -235,21 +257,32 @@ namespace ProjektBibliotekaMVC.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.BooksCopies'  is null.");
             }
-            var bookCopy = await _context.BooksCopies.FindAsync(id);
+            var bookCopy = _context.BooksCopies.Where(u => u.Id == id).FirstOrDefault();
             Book book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookCopy.IdBook);
             if (bookCopy != null)
             {
+                
                 if (bookCopy.Status == SD.BookInMagazine)
                 {
                     book.InMagazineCount--;
                 }
                 else if (bookCopy.Status == SD.BookIsWaiting)
                 {
-                    book.WaitingCount--;
+                    var waitingBook = _context.WaitingBook.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
+                    if (waitingBook != null)
+                    {
+                        _context.Remove(waitingBook);
+                        book.WaitingCount--;
+                    }    
                 }
                 else if (bookCopy.Status == SD.BookIsBorrowed)
                 {
-                    book.BorrowedCount--;
+                    var borrow = _context.Borrows.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
+                    if (borrow != null)
+                    {
+                        _context.Remove(borrow);
+                        book.BorrowedCount--;
+                    }
                 }
                 _context.Update(book);
                 _context.BooksCopies.Remove(bookCopy);

@@ -29,17 +29,28 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="BooksList">Przegląd Książek (User)</a>
                         </li>
-                        @{
-                            if (User.Identity.IsAuthenticated)
-                            {
-                                if (User.IsInRole(SD.RoleUserAdmin) || User.IsInRole(SD.RoleUserEmployee))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Przegląd Książek (Admin)</a>
-                                    </li>
+                        
+                        <div class="dropdown">
+                            <button class="dropbtn">Admin panel</button>
+                            <div class="dropdown-content">
+                                @{
+                                    if (User.Identity.IsAuthenticated)
+                                    {
+                                        if (User.IsInRole(SD.RoleUserAdmin) || User.IsInRole(SD.RoleUserEmployee))
+                                        {
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Przegląd Książek (Admin)</a>
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="CustomersIndex">Klienci</a>
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="WaitingBooks" asp-action="Index">Ksiazki oczekujace na odbior</a>
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="Borrows" asp-action="Index">Wypożyczenia</a>
+                                        }
+                                        if (User.IsInRole(SD.RoleUserAdmin))
+                                        {
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="EmployeesIndex">Pracownicy</a>
+                                        }
+                                    }
                                 }
-                            }
-                        }
+                            </div>
+                        </div>
                     </ul>
                     <button class="btn custom-btn-cart ml-auto">
                         <img src="~/Images/cart.png" width="25" alt="Kliknij, aby pobrać obrazki" /><br>Koszyk

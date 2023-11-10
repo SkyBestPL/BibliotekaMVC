@@ -13,5 +13,6 @@ namespace ProjektBibliotekaMVC.Models
         public string Status { get; set; }
         public Book Book { get; set; }
         public Borrow? Borrow { get; set; }
+        public WaitingBook? WaitingBook { get; set; }
     }
 }

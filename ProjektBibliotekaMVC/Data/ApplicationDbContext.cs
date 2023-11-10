@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using ProjektBibliotekaMVC.Utility;
 
 namespace ProjektBibliotekaMVC.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, string,
+        IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>,
+        IdentityRoleClaim<string>, IdentityUserToken<string>>
+    //public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -78,6 +82,72 @@ namespace ProjektBibliotekaMVC.Data
             //    .WithOne(e => e.ParentCategory)
             //    .HasForeignKey(e => e.IdParentCategory)
             //    .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<BookCopy>()
+                .HasOne(e => e.WaitingBook)
+                .WithOne(e => e.BookCopy)
+                .HasForeignKey<WaitingBook>(e => e.IdBookCopy)
+                .IsRequired();
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(e => e.WaitingBooks)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.IdUser)
+                .IsRequired();
+            modelBuilder.Entity<ApplicationUser>(b =>
+            {
+                b.HasMany(e => e.UserRoles)
+                .WithOne(e => e.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+            });
+
+            modelBuilder.Entity<Role>(b =>
+            {
+                b.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.Role)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
+
+            Seed(modelBuilder);
+        }
+        private void Seed(ModelBuilder builder)
+        {
+            var adminUser = new ApplicationUser()
+            {
+                Email = "admin@admin.com",
+                NormalizedEmail = "ADMIN@ADMIN.COM",
+                UserName = "admin@admin.com",
+                NormalizedUserName = "ADMIN@ADMIN.COM",
+                PasswordHash = "AQAAAAIAAYagAAAAEPUNEAqcNcxGGHdqJaBhLcNgI80cGZXZUhMi7wKsptS9IJTF6BzFh8AlQAaDSqeA5g==",
+                EmailConfirmed = true
+            };
+            var rolAdmin = new Role()
+            {
+                Name = SD.RoleUserAdmin,
+                NormalizedName = SD.RoleUserAdmin
+            };
+
+            var employeeRole = new Role()
+            {
+                Name = SD.RoleUserEmployee,
+                NormalizedName = SD.RoleUserEmployee
+            };
+
+            var customerRole = new Role()
+            {
+                Name = SD.RoleUserCustomer,
+                NormalizedName = SD.RoleUserCustomer
+            };
+            builder.Entity<Role>().HasData(rolAdmin, employeeRole, customerRole);
+            builder.Entity<ApplicationUser>().HasData(adminUser);
+
+            var userRoleAdmin = new UserRole()
+            {
+                RoleId = rolAdmin.Id,
+                UserId = adminUser.Id
+            };
+
+            builder.Entity<UserRole>().HasData(userRoleAdmin);
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Book> Books { get; set; }
@@ -91,5 +161,6 @@ namespace ProjektBibliotekaMVC.Data
         public DbSet<News> Newses { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Limit> Limits { get; set; }
+        public DbSet<WaitingBook> WaitingBook { get; set; } = default!;
     }
 }

@@ -19,5 +19,7 @@ namespace ProjektBibliotekaMVC.Utility
         public int Amount { get; set; }
         [ValidateNever]
         public int Deleted { get; set; }
+        [ValidateNever]
+        public string Email { get; set; }
     }
 }

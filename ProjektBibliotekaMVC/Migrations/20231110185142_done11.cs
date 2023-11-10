@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjektBibliotekaMVC.Migrations
 {
     /// <inheritdoc />
-    public partial class done1 : Migration
+    public partial class done11 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,6 +16,7 @@ namespace ProjektBibliotekaMVC.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -57,12 +58,12 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdAuthor = table.Column<int>(type: "int", nullable: false),
-                    IdCathegory = table.Column<int>(type: "int", nullable: false),
+                    AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorSurename = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdCategory = table.Column<int>(type: "int", nullable: false),
                     ISBN = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contents = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     InMagazineCount = table.Column<int>(type: "int", nullable: false),
                     WaitingCount = table.Column<int>(type: "int", nullable: false),
                     BorrowedCount = table.Column<int>(type: "int", nullable: false)
@@ -202,7 +203,8 @@ namespace ProjektBibliotekaMVC.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

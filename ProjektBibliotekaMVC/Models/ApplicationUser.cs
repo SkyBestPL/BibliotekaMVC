@@ -10,7 +10,9 @@ namespace ProjektBibliotekaMVC.Models
         public List<BorrowHistory> BorrowsHistory { get; } = new();
         public List<Queue> Queues { get; } = new();
         public List<Borrow> Borrows { get; } = new();
+        public List<WaitingBook> WaitingBooks { get; } = new();
         public List<Cart> Carts { get; } = new();
         public List<SearchHistory> SearchesHistory { get; } = new();
+        public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }

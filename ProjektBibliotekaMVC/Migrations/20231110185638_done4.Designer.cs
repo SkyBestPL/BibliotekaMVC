@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjektBibliotekaMVC.Data;
 
@@ -11,9 +12,11 @@ using ProjektBibliotekaMVC.Data;
 namespace ProjektBibliotekaMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231110185638_done4")]
+    partial class done4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,17 +202,16 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "10fbf09f-bf39-4c19-a923-0f3b855586ec",
+                            Id = "4d377c6e-34c1-48ac-991f-319b23047936",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ee58a062-f6d9-47f5-b095-0e8963f71b2e",
+                            ConcurrencyStamp = "0d876edf-71dc-4077-a598-b7647d07a5cd",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPUNEAqcNcxGGHdqJaBhLcNgI80cGZXZUhMi7wKsptS9IJTF6BzFh8AlQAaDSqeA5g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ffbabe86-aa06-4992-8b97-0f9bcec60d26",
+                            SecurityStamp = "f61c32f5-d75f-41b1-9521-3576c7c97c5d",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -495,19 +497,19 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b715cd2b-48d5-4e79-a8b2-76dabb588d7d",
+                            Id = "be6f2179-4c7d-462d-a6c2-9afb495164f8",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "1f9db6a4-2079-4cc7-b654-eecce2524547",
+                            Id = "491d31f0-2b18-4d6d-9ee6-ec7daeb065e0",
                             Name = "Employee",
                             NormalizedName = "Employee"
                         },
                         new
                         {
-                            Id = "839ff988-0351-458d-8baf-3a1ba452b797",
+                            Id = "3ef9696c-065c-4ab0-b8b5-5c275f6d197d",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         });
@@ -574,37 +576,9 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "10fbf09f-bf39-4c19-a923-0f3b855586ec",
-                            RoleId = "b715cd2b-48d5-4e79-a8b2-76dabb588d7d"
+                            UserId = "4d377c6e-34c1-48ac-991f-319b23047936",
+                            RoleId = "be6f2179-4c7d-462d-a6c2-9afb495164f8"
                         });
-                });
-
-            modelBuilder.Entity("ProjektBibliotekaMVC.Models.WaitingBook", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IdBookCopy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IdUser")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdBookCopy")
-                        .IsUnique();
-
-                    b.HasIndex("IdUser");
-
-                    b.ToTable("WaitingBook");
                 });
 
             modelBuilder.Entity("BookTag", b =>
@@ -790,25 +764,6 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProjektBibliotekaMVC.Models.WaitingBook", b =>
-                {
-                    b.HasOne("ProjektBibliotekaMVC.Models.BookCopy", "BookCopy")
-                        .WithOne("WaitingBook")
-                        .HasForeignKey("ProjektBibliotekaMVC.Models.WaitingBook", "IdBookCopy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
-                        .WithMany("WaitingBooks")
-                        .HasForeignKey("IdUser")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BookCopy");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Borrows");
@@ -822,8 +777,6 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("SearchesHistory");
 
                     b.Navigation("UserRoles");
-
-                    b.Navigation("WaitingBooks");
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Book", b =>
@@ -842,8 +795,6 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.BookCopy", b =>
                 {
                     b.Navigation("Borrow");
-
-                    b.Navigation("WaitingBook");
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Category", b =>

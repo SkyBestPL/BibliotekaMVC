@@ -12,8 +12,8 @@ using ProjektBibliotekaMVC.Data;
 namespace ProjektBibliotekaMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231110141331_done4")]
-    partial class done4
+    [Migration("20231110185142_done11")]
+    partial class done11
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,10 @@ namespace ProjektBibliotekaMVC.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -65,6 +69,10 @@ namespace ProjektBibliotekaMVC.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -222,11 +230,19 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -281,10 +297,6 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.Property<int>("InMagazineCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -548,11 +560,25 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("ProjektBibliotekaMVC.Models.Role", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
+
+                    b.HasDiscriminator().HasValue("Role");
+                });
+
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
+                });
+
+            modelBuilder.Entity("ProjektBibliotekaMVC.Models.UserRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
+
+                    b.HasDiscriminator().HasValue("UserRole");
                 });
 
             modelBuilder.Entity("BookTag", b =>
@@ -732,6 +758,25 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProjektBibliotekaMVC.Models.UserRole", b =>
+                {
+                    b.HasOne("ProjektBibliotekaMVC.Models.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Book", b =>
                 {
                     b.Navigation("BookCopies");
@@ -755,6 +800,11 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("ChildCategories");
                 });
 
+            modelBuilder.Entity("ProjektBibliotekaMVC.Models.Role", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Borrows");
@@ -766,6 +816,8 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("Queues");
 
                     b.Navigation("SearchesHistory");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
