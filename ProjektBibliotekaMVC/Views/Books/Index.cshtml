@@ -13,10 +13,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.IdAuthor)
+                @Html.DisplayNameFor(model => model.AuthorName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdCathegory)
+                @Html.DisplayNameFor(model => model.AuthorSurename)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdCategory)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ISBN)
@@ -27,9 +30,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Contents)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -37,10 +37,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.IdAuthor)
+                @Html.DisplayFor(modelItem => item.AuthorName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IdCathegory)
+                @Html.DisplayFor(modelItem => item.AuthorSurename)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCategory)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ISBN)
@@ -52,9 +55,7 @@
                 @Html.DisplayFor(modelItem => item.Contents)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
+                <a class="nav-link text-dark" asp-area="" asp-route-id="@item.Id" asp-controller="Books" asp-action="ViewCopies">Egzemplarze Ksiazki</a> |
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>

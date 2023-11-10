@@ -4,19 +4,21 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
+<h3>Title: @ViewBag.BookTitle</h3>
+<p>In magazine: @ViewBag.InMagazineCount</p>
+<p>Waiting to be picked up: @ViewBag.WaitingCount</p>
+<p>Borrowed: @ViewBag.BorrowedCount</p>
 <p>
-    <a asp-route-id ="@ViewBag.Id" asp-action="Create">Create New</a>
+    <a asp-route-id="@ViewBag.Id" asp-action="Create">Create New</a>
+</p>
+<p>
+    <a asp-route-id="@ViewBag.Id" asp-action="MassDelete">Mass Delete</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book)
             </th>
             <th></th>
         </tr>
@@ -29,11 +31,8 @@
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Book.Contents)
-                </td>
-                <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>

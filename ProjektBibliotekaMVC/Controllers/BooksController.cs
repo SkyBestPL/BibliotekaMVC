@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjektBibliotekaMVC.Data;
 using ProjektBibliotekaMVC.Models;
+using ProjektBibliotekaMVC.Utility;
 
 namespace BibliotekaMVC.Controllers
 {
@@ -20,6 +23,7 @@ namespace BibliotekaMVC.Controllers
         }
 
         // GET: Books
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Index()
         {
               return _context.Books != null ? 
@@ -35,6 +39,7 @@ namespace BibliotekaMVC.Controllers
         }
 
         // GET: Books/Details/5
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Books == null)
@@ -53,6 +58,7 @@ namespace BibliotekaMVC.Controllers
         }
 
         // GET: Books/Create
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public IActionResult Create()
         {
             return View();
@@ -63,7 +69,8 @@ namespace BibliotekaMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] Book bookEntity)
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
+        public async Task<IActionResult> Create([Bind("Id,AuthorName,AuthorSurename,IdCategory,ISBN,Title,Contents")] Book bookEntity)
         {
             if (ModelState.IsValid)
             {
@@ -75,6 +82,7 @@ namespace BibliotekaMVC.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Books == null)
@@ -95,6 +103,7 @@ namespace BibliotekaMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] Book bookEntity)
         {
             if (id != bookEntity.Id)
@@ -126,6 +135,7 @@ namespace BibliotekaMVC.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Books == null)
@@ -146,6 +156,7 @@ namespace BibliotekaMVC.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Books == null)
@@ -166,10 +177,10 @@ namespace BibliotekaMVC.Controllers
         {
           return (_context.Books?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-
+        [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public IActionResult ViewCopies(int id)
         {
-            return RedirectToAction("IndexForBook", new RouteValueDictionary(new { controller = "BookCopies", action = "IndexForBook", Id = id }));
+            return RedirectToAction("IndexForBook", new RouteValueDictionary(new { controller = "BookCopies", action = "IndexForBook", id = id }));
         }
     }
 }

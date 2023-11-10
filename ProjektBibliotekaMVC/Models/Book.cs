@@ -9,21 +9,17 @@ namespace ProjektBibliotekaMVC.Models
     {
         [Key]
         public int Id { get; set; }
-        public int IdAuthor { get; set; }
-        public int IdCathegory { get; set; }
+        public string AuthorName { get; set; }
+        public string AuthorSurename { get; set; }
+        public int IdCategory { get; set; }
         [Required]
         public int ISBN { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]
         public string Contents { get; set; }
-        [Required]
-        public string Status { get; set; }
-        [Required]
         public int InMagazineCount { get; set; } = 0;
-        [Required]
         public int WaitingCount { get; set; } = 0;
-        [Required]
         public int BorrowedCount { get; set; } = 0;
         public List<Tag> Tags { get; } = new();
         public List<BorrowHistory> BorrowsHistory { get; } = new();

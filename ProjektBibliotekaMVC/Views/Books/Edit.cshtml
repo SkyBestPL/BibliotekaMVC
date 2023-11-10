@@ -14,14 +14,19 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="IdAuthor" class="control-label"></label>
-                <input asp-for="IdAuthor" class="form-control" />
-                <span asp-validation-for="IdAuthor" class="text-danger"></span>
+                <label asp-for="AuthorName" class="control-label"></label>
+                <input asp-for="AuthorName" class="form-control" />
+                <span asp-validation-for="AuthorName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdCathegory" class="control-label"></label>
-                <input asp-for="IdCathegory" class="form-control" />
-                <span asp-validation-for="IdCathegory" class="text-danger"></span>
+                <label asp-for="AuthorSurename" class="control-label"></label>
+                <input asp-for="AuthorSurename" class="form-control" />
+                <span asp-validation-for="AuthorSurename" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdCategory" class="control-label"></label>
+                <input asp-for="IdCategory" class="form-control" />
+                <span asp-validation-for="IdCategory" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ISBN" class="control-label"></label>
@@ -39,15 +44,7 @@
                 <span asp-validation-for="Contents" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-            <div>
-                <button class="nav-link text-dark" asp-area="" asp-route-id="Id" asp-controller="Books" asp-action="ViewCopies">Egzemplarze Książek</button>
             </div>
         </form>
     </div>

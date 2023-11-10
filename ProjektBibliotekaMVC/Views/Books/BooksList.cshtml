@@ -14,17 +14,18 @@
                 <div>
                     <p><strong>@Html.DisplayFor(modelItem => item.Title)</strong></p>
                     <p>Opis książki: <br> @Html.DisplayFor(modelItem => item.Contents)</p>
-                    <p>Autor: @Html.DisplayFor(modelItem => item.IdAuthor)</p>
-                    <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCathegory)</p>
+                    <p>Imie: @Html.DisplayFor(modelItem => item.AuthorName)</p>
+                    <p>Nazwisko: @Html.DisplayFor(modelItem => item.AuthorSurename)</p>
+                    <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCategory)</p>
                     <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
-                    @if (item.Status != "taken")
+                    @*@if (item.Status != "taken")
                     {
                         <button class="button-tocart" onclick="addToCart('@item.Id')">Dodaj do koszyka</button>
                     }
                     else
                     {
                         <button disabled style="background-color: grey; cursor: not-allowed;">Niedostępne</button>
-                    }
+                    }*@
                 </div>
             </div>
             <div class="book-image">

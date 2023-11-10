@@ -13,14 +13,19 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="IdAuthor" class="control-label"></label>
-                <input asp-for="IdAuthor" class="form-control" />
-                <span asp-validation-for="IdAuthor" class="text-danger"></span>
+                <label asp-for="AuthorName" class="control-label"></label>
+                <input asp-for="AuthorName" class="form-control" />
+                <span asp-validation-for="AuthorName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdCathegory" class="control-label"></label>
-                <input asp-for="IdCathegory" class="form-control" />
-                <span asp-validation-for="IdCathegory" class="text-danger"></span>
+                <label asp-for="AuthorSurename" class="control-label"></label>
+                <input asp-for="AuthorSurename" class="form-control" />
+                <span asp-validation-for="AuthorSurename" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdCategory" class="control-label"></label>
+                <input asp-for="IdCategory" class="form-control" />
+                <span asp-validation-for="IdCategory" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ISBN" class="control-label"></label>
@@ -36,11 +41,6 @@
                 <label asp-for="Contents" class="control-label"></label>
                 <input asp-for="Contents" class="form-control" />
                 <span asp-validation-for="Contents" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
