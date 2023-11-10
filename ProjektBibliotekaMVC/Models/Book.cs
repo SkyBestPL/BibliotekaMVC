@@ -20,11 +20,11 @@ namespace ProjektBibliotekaMVC.Models
         [Required]
         public string Status { get; set; }
         [Required]
-        public int InMagazineCount { get; set; }
+        public int InMagazineCount { get; set; } = 0;
         [Required]
-        public int WaitingCount { get; set; }
+        public int WaitingCount { get; set; } = 0;
         [Required]
-        public int BorrowedCount { get; set; }
+        public int BorrowedCount { get; set; } = 0;
         public List<Tag> Tags { get; } = new();
         public List<BorrowHistory> BorrowsHistory { get; } = new();
         public List<BookCopy> BookCopies { get; } = new();

@@ -166,5 +166,10 @@ namespace BibliotekaMVC.Controllers
         {
           return (_context.Books?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public IActionResult ViewCopies(int id)
+        {
+            return RedirectToAction("IndexForBook", new RouteValueDictionary(new { controller = "BookCopies", action = "IndexForBook", Id = id }));
+        }
     }
 }

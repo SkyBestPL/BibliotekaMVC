@@ -12,7 +12,7 @@ using ProjektBibliotekaMVC.Data;
 namespace ProjektBibliotekaMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231109192244_done1")]
+    [Migration("20231109223210_done1")]
     partial class done1
     {
         /// <inheritdoc />
@@ -296,6 +296,12 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.BookCopy", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdBook")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -304,24 +310,35 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdBook");
+
                     b.ToTable("BooksCopies");
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Borrow", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
+                    b.Property<int>("IdBookCopy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IdBookCopy")
+                        .IsUnique();
+
+                    b.HasIndex("IdUser");
 
                     b.ToTable("Borrows");
                 });
@@ -329,18 +346,26 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.BorrowHistory", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
+                    b.Property<int>("IdBook")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IdBook");
+
+                    b.HasIndex("IdUser");
 
                     b.ToTable("BorrowsHistory");
                 });
@@ -348,15 +373,23 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdBook")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IdBook");
+
+                    b.HasIndex("IdUser");
 
                     b.ToTable("Carts");
                 });
@@ -369,11 +402,23 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdParentCategory")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Categories");
                 });
@@ -424,16 +469,30 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Queue", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
+                    b.Property<int>("IdBook")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookId");
 
                     b.HasIndex("UserId");
 
@@ -443,18 +502,26 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.SearchHistory", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
+                    b.Property<int>("IdBook")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IdBook");
+
+                    b.HasIndex("IdUser");
 
                     b.ToTable("SearchesHistory");
                 });
@@ -553,7 +620,7 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", "Book")
                         .WithMany("BookCopies")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("IdBook")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -564,13 +631,13 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.BookCopy", "BookCopy")
                         .WithOne("Borrow")
-                        .HasForeignKey("ProjektBibliotekaMVC.Models.Borrow", "Id")
+                        .HasForeignKey("ProjektBibliotekaMVC.Models.Borrow", "IdBookCopy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
                         .WithMany("Borrows")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -583,13 +650,13 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", "Book")
                         .WithMany("BorrowsHistory")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("IdBook")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
                         .WithMany("BorrowsHistory")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -601,14 +668,14 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Cart", b =>
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", "Book")
-                        .WithOne("Cart")
-                        .HasForeignKey("ProjektBibliotekaMVC.Models.Cart", "Id")
+                        .WithMany("Carts")
+                        .HasForeignKey("IdBook")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
                         .WithMany("Carts")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -619,28 +686,22 @@ namespace ProjektBibliotekaMVC.Migrations
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Category", b =>
                 {
-                    b.HasOne("ProjektBibliotekaMVC.Models.Category", "ParentCategory")
+                    b.HasOne("ProjektBibliotekaMVC.Models.Category", null)
                         .WithMany("ChildCategories")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParentCategory");
+                        .HasForeignKey("CategoryId");
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Queue", b =>
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", "Book")
                         .WithMany("Queues")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
                         .WithMany("Queues")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Book");
 
@@ -651,13 +712,13 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     b.HasOne("ProjektBibliotekaMVC.Models.Book", "Book")
                         .WithMany("SearchesHistory")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("IdBook")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
                         .WithMany("SearchesHistory")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -672,7 +733,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.Navigation("BorrowsHistory");
 
-                    b.Navigation("Cart");
+                    b.Navigation("Carts");
 
                     b.Navigation("Queues");
 

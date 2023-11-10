@@ -1,7 +1,6 @@
 ﻿using ProjektBibliotekaMVC.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity;
 
 namespace ProjektBibliotekaMVC.Data
@@ -15,6 +14,7 @@ namespace ProjektBibliotekaMVC.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<Book>()
                 .HasMany(e => e.Tags)
                 .WithMany(e => e.Books)
@@ -73,10 +73,11 @@ namespace ProjektBibliotekaMVC.Data
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.IdUser)
                 .IsRequired();
-            modelBuilder.Entity<Category>()
-                .HasMany(e => e.ChildCategories)
-                .WithOne(e => e.ParentCategory)
-                .HasForeignKey(e => e.IdParentCategory);
+            //modelBuilder.Entity<Category>()
+            //    .HasMany(e => e.ChildCategories)
+            //    .WithOne(e => e.ParentCategory)
+            //    .HasForeignKey(e => e.IdParentCategory)
+            //    .OnDelete(DeleteBehavior.NoAction);
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Book> Books { get; set; }

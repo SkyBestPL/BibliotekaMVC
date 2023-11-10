@@ -78,11 +78,19 @@ namespace ProjektBibliotekaMVC.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    IdParentCategory = table.Column<int>(type: "int", nullable: true),
+                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -237,15 +245,17 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "BooksCopies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBook = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BooksCopies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BooksCopies_Books_Id",
-                        column: x => x.Id,
+                        name: "FK_BooksCopies_Books_IdBook",
+                        column: x => x.IdBook,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -255,22 +265,24 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "BorrowsHistory",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBook = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BorrowsHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BorrowsHistory_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_BorrowsHistory_AspNetUsers_IdUser",
+                        column: x => x.IdUser,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BorrowsHistory_Books_Id",
-                        column: x => x.Id,
+                        name: "FK_BorrowsHistory_Books_IdBook",
+                        column: x => x.IdBook,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -280,21 +292,23 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "Carts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBook = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Carts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Carts_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Carts_AspNetUsers_IdUser",
+                        column: x => x.IdUser,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Carts_Books_Id",
-                        column: x => x.Id,
+                        name: "FK_Carts_Books_IdBook",
+                        column: x => x.IdBook,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -304,9 +318,13 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "Queues",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBook = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -315,11 +333,10 @@ namespace ProjektBibliotekaMVC.Migrations
                         name: "FK_Queues_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Queues_Books_Id",
-                        column: x => x.Id,
+                        name: "FK_Queues_Books_BookId",
+                        column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -329,22 +346,24 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "SearchesHistory",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBook = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SearchesHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SearchesHistory_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_SearchesHistory_AspNetUsers_IdUser",
+                        column: x => x.IdUser,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SearchesHistory_Books_Id",
-                        column: x => x.Id,
+                        name: "FK_SearchesHistory_Books_IdBook",
+                        column: x => x.IdBook,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -378,22 +397,24 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "Borrows",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBookCopy = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Borrows", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Borrows_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Borrows_AspNetUsers_IdUser",
+                        column: x => x.IdUser,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Borrows_BooksCopies_Id",
-                        column: x => x.Id,
+                        name: "FK_Borrows_BooksCopies_IdBookCopy",
+                        column: x => x.IdBookCopy,
                         principalTable: "BooksCopies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -439,24 +460,55 @@ namespace ProjektBibliotekaMVC.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BooksCopies_IdBook",
+                table: "BooksCopies",
+                column: "IdBook");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BookTag_IdTag",
                 table: "BookTag",
                 column: "IdTag");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Borrows_UserId",
+                name: "IX_Borrows_IdBookCopy",
                 table: "Borrows",
-                column: "UserId");
+                column: "IdBookCopy",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BorrowsHistory_UserId",
+                name: "IX_Borrows_IdUser",
+                table: "Borrows",
+                column: "IdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BorrowsHistory_IdBook",
                 table: "BorrowsHistory",
-                column: "UserId");
+                column: "IdBook");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_UserId",
+                name: "IX_BorrowsHistory_IdUser",
+                table: "BorrowsHistory",
+                column: "IdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_IdBook",
                 table: "Carts",
-                column: "UserId");
+                column: "IdBook");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_IdUser",
+                table: "Carts",
+                column: "IdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_CategoryId",
+                table: "Categories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Queues_BookId",
+                table: "Queues",
+                column: "BookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Queues_UserId",
@@ -464,9 +516,14 @@ namespace ProjektBibliotekaMVC.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SearchesHistory_UserId",
+                name: "IX_SearchesHistory_IdBook",
                 table: "SearchesHistory",
-                column: "UserId");
+                column: "IdBook");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SearchesHistory_IdUser",
+                table: "SearchesHistory",
+                column: "IdUser");
         }
 
         /// <inheritdoc />
