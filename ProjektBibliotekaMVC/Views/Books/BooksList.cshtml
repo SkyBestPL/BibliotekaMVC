@@ -7,6 +7,10 @@
 <h1 class="margin-bottom-small text-center">Nasze Książki</h1>
 
 <ul class="book-list-2">
+    <form class="margin-bottom-small" method="get" action="@Url.Action("BooksList", "Books")">
+        <input type="text" name="searchString" placeholder="Wyszukaj książkę...">
+        <input type="submit" value="Szukaj">
+    </form>
     @foreach (var item in Model)
     {
         <li class="book-item">
@@ -14,18 +18,17 @@
                 <div>
                     <p><strong>@Html.DisplayFor(modelItem => item.Title)</strong></p>
                     <p>Opis książki: <br> @Html.DisplayFor(modelItem => item.Contents)</p>
-                    <p>Imie: @Html.DisplayFor(modelItem => item.AuthorName)</p>
-                    <p>Nazwisko: @Html.DisplayFor(modelItem => item.AuthorSurename)</p>
+                    <p>Autor: @Html.DisplayFor(modelItem => item.AuthorName) @Html.DisplayFor(modelItem => item.AuthorSurename)</p>
                     <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCategory)</p>
                     <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
-                    @*@if (item.Status != "taken")
+                    @if (item.InMagazineCount > 0)
                     {
                         <button class="button-tocart" onclick="addToCart('@item.Id')">Dodaj do koszyka</button>
                     }
                     else
                     {
                         <button disabled style="background-color: grey; cursor: not-allowed;">Niedostępne</button>
-                    }*@
+                    }
                 </div>
             </div>
             <div class="book-image">

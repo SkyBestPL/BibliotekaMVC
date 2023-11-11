@@ -31,11 +31,23 @@ namespace BibliotekaMVC.Controllers
                           Problem("Entity set 'ApplicationDbContext.Books'  is null.");
         }
 
-        public async Task<IActionResult> BooksList()
+        public async Task<IActionResult> BooksList(string searchString)
         {
-            return _context.Books != null ?
+            var books = _context.Books.ToList();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(b => 
+                b.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                (b.AuthorName + " " + b.AuthorSurename).Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                b.ISBN.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return View(books);
+
+            /*return _context.Books != null ?
                         View(await _context.Books.ToListAsync()) :
-                        Problem("Entity set 'ApplicationDbContext.Books'  is null.");
+                        Problem("Entity set 'ApplicationDbContext.Books'  is null.");*/
         }
 
         // GET: Books/Details/5

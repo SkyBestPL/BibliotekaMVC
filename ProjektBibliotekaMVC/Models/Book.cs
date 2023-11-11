@@ -13,7 +13,7 @@ namespace ProjektBibliotekaMVC.Models
         public string AuthorSurename { get; set; }
         public int IdCategory { get; set; }
         [Required]
-        public int ISBN { get; set; }
+        public string ISBN { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]
