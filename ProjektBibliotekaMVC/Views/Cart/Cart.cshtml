@@ -1,0 +1,35 @@
+﻿@model IEnumerable<ProjektBibliotekaMVC.Models.Cart>
+
+<h2>Twój koszyk</h2>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nazwa książki</th>
+                <th>Ilość</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cartItem in Model)
+            {
+                <tr>
+                    <td>@cartItem.Book.Title</td>
+                    <td>
+                        <a asp-action="RemoveFromCart" asp-route-id="@cartItem.Id">Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>
+        <a asp-action="Checkout">Zamów</a>
+    </div>
+}
+else
+{
+    <p>Twój koszyk jest pusty.</p>
+}
