@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ProjektBibliotekaMVC.Migrations
 {
     /// <inheritdoc />
-    public partial class done11 : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +18,6 @@ namespace ProjektBibliotekaMVC.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -31,7 +32,6 @@ namespace ProjektBibliotekaMVC.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -61,7 +61,7 @@ namespace ProjektBibliotekaMVC.Migrations
                     AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorSurename = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdCategory = table.Column<int>(type: "int", nullable: false),
-                    ISBN = table.Column<int>(type: "int", nullable: false),
+                    ISBN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contents = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     InMagazineCount = table.Column<int>(type: "int", nullable: false),
@@ -203,8 +203,7 @@ namespace ProjektBibliotekaMVC.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -326,7 +325,7 @@ namespace ProjektBibliotekaMVC.Migrations
                     IdUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -335,7 +334,8 @@ namespace ProjektBibliotekaMVC.Migrations
                         name: "FK_Queues_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Queues_Books_BookId",
                         column: x => x.BookId,
@@ -421,6 +421,53 @@ namespace ProjektBibliotekaMVC.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "WaitingBook",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdBookCopy = table.Column<int>(type: "int", nullable: false),
+                    IdUser = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WaitingBook", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WaitingBook_AspNetUsers_IdUser",
+                        column: x => x.IdUser,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WaitingBook_BooksCopies_IdBookCopy",
+                        column: x => x.IdBookCopy,
+                        principalTable: "BooksCopies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "5c2968b5-698e-421e-8ff1-200adfdc6551", null, "Employee", "Employee" },
+                    { "8c1005ce-496d-4119-b486-39b1777c946d", null, "Customer", "Customer" },
+                    { "e7eaaf3d-1a9c-41dd-b18c-d0777783ac01", null, "Admin", "Admin" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "92c21599-2954-4a0a-88b3-f8666c16903c", 0, "8388b3ab-c4fc-4dea-a3a4-957bf7e3fafb", "admin@admin.com", true, false, null, "ADMIN@ADMIN.COM", "ADMIN@ADMIN.COM", "AQAAAAIAAYagAAAAEPUNEAqcNcxGGHdqJaBhLcNgI80cGZXZUhMi7wKsptS9IJTF6BzFh8AlQAaDSqeA5g==", null, false, "f0ffad36-90da-4428-a5b8-52898e3b846b", false, "admin@admin.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "e7eaaf3d-1a9c-41dd-b18c-d0777783ac01", "92c21599-2954-4a0a-88b3-f8666c16903c" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -526,6 +573,17 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "IX_SearchesHistory_IdUser",
                 table: "SearchesHistory",
                 column: "IdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WaitingBook_IdBookCopy",
+                table: "WaitingBook",
+                column: "IdBookCopy",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WaitingBook_IdUser",
+                table: "WaitingBook",
+                column: "IdUser");
         }
 
         /// <inheritdoc />
@@ -574,16 +632,19 @@ namespace ProjektBibliotekaMVC.Migrations
                 name: "SearchesHistory");
 
             migrationBuilder.DropTable(
+                name: "WaitingBook");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "BooksCopies");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "BooksCopies");
 
             migrationBuilder.DropTable(
                 name: "Books");

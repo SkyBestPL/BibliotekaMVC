@@ -1,4 +1,6 @@
-﻿@model IEnumerable<ProjektBibliotekaMVC.Models.Cart>
+﻿@inject ProjektBibliotekaMVC.Data.ApplicationDbContext _context
+
+@model IEnumerable<ProjektBibliotekaMVC.Models.Cart>
 
 <h2>Twój koszyk</h2>
 
@@ -8,17 +10,23 @@
         <thead>
             <tr>
                 <th>Nazwa książki</th>
-                <th>Ilość</th>
+                <th>Autor</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var cartItem in Model)
             {
+
+                var book = _context.Books.FirstOrDefault(b => b.Id == cartItem.IdBook);
                 <tr>
-                    <td>@cartItem.Book.Title</td>
+                    <td>@book.Title</td>
+                    <td>@book.AuthorName @book.AuthorSurename</td>
                     <td>
-                        <a asp-action="RemoveFromCart" asp-route-id="@cartItem.Id">Usuń</a>
+                        <form method="post" action="@Url.Action("RemoveFromCart", "Cart")">
+                            <input type="hidden" name="cartItemId" value="@cartItem.Id" />
+                            <button type="submit">Usuń z koszyka</button>
+                        </form>
                     </td>
                 </tr>
             }
@@ -26,7 +34,9 @@
     </table>
 
     <div>
-        <a asp-action="Checkout">Zamów</a>
+        <form method="post" action="@Url.Action("Checkout", "Cart")">
+            <button type="submit" class="button-tocart">Wypożycz książki</button>
+        </form>
     </div>
 }
 else

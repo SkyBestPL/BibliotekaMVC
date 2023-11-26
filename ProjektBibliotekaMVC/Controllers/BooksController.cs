@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,11 @@ namespace BibliotekaMVC.Controllers
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BooksController(ApplicationDbContext context)
+        public BooksController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
@@ -34,6 +37,8 @@ namespace BibliotekaMVC.Controllers
         public async Task<IActionResult> BooksList(string searchString)
         {
             var books = _context.Books.ToList();
+            var user = _userManager.GetUserAsync(User);
+            ViewBag.UserId = user.Id;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -82,11 +87,24 @@ namespace BibliotekaMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
-        public async Task<IActionResult> Create([Bind("Id,AuthorName,AuthorSurename,IdCategory,ISBN,Title,Contents")] Book bookEntity)
+        public async Task<IActionResult> Create([Bind("Id,AuthorName,AuthorSurename,IdCategory,ISBN,Title,Contents, InMagazineCount")] Book bookEntity)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(bookEntity);
+                
+                //tworzenie rekordów w BookCopies na podstawie InMagazineCount
+                for (int i = 0; i < bookEntity.InMagazineCount; i++)
+                {
+                    var bookCopy = new BookCopy
+                    {
+                        IdBook = bookEntity.Id,
+                        Status = "InMagazine",
+                        Book = bookEntity,
+                    };
+
+                    bookEntity.BookCopies.Add(bookCopy);
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -116,7 +134,7 @@ namespace BibliotekaMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,Status")] Book bookEntity)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdAuthor,IdCathegory,ISBN,Title,Contents,InMagazineCount")] Book bookEntity)
         {
             if (id != bookEntity.Id)
             {
@@ -193,6 +211,46 @@ namespace BibliotekaMVC.Controllers
         public IActionResult ViewCopies(int id)
         {
             return RedirectToAction("IndexForBook", new RouteValueDictionary(new { controller = "BookCopies", action = "IndexForBook", id = id }));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddToCart(int bookCopyId)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return NotFound("Użytkownik nie został znaleziony.");
+                }
+
+                var bookCopy = _context.BooksCopies.FirstOrDefault(b => b.Id == bookCopyId);
+                var book = _context.Books.FirstOrDefault(b => b.Id == bookCopy.IdBook);
+
+                if (book == null)
+                {
+                    return NotFound("Książka nie została znaleziona.");
+                }
+
+                var newCart = new Cart
+                {
+                    IdBook = bookCopy.Id,
+                    IdUser = user.Id,
+                    Book = bookCopy.Book,
+                    User = user,
+                };
+
+                _context.Carts.Add(newCart);
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("BooksList");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Wystąpił błąd: {ex.Message}");
+            }
         }
     }
 }

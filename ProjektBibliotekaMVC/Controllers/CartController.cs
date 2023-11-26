@@ -36,7 +36,7 @@ namespace ProjektBibliotekaMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int bookId)
+        public async Task<IActionResult> RemoveFromCart(int cartItemId)
         {
             try
             {
@@ -47,27 +47,18 @@ namespace ProjektBibliotekaMVC.Controllers
                     return NotFound("Użytkownik nie został znaleziony.");
                 }
 
-                var book = await _context.Books.FindAsync(bookId);
+                var cartItem = await _context.Carts.FindAsync(cartItemId);
 
-                if (book == null)
+                if (cartItem == null || cartItem.IdUser != user.Id)
                 {
-                    return NotFound("Książka nie została znaleziona.");
+                    return NotFound("Nie znaleziono przedmiotu w koszyku.");
                 }
 
-                var newCart = new Cart
-                {
-                    Id = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    IdBook = book.Id,
-                    IdUser = user.Id,
-                    Book = book,
-                    User = user,
-                };
-
-                _context.Carts.Add(newCart);
+                _context.Carts.Remove(cartItem);
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Cart");
             }
             catch (Exception ex)
             {

@@ -12,8 +12,8 @@ using ProjektBibliotekaMVC.Data;
 namespace ProjektBibliotekaMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231110211943_done10")]
-    partial class done10
+    [Migration("20231125175044_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,17 +202,17 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b3fdb3a4-f39b-41e0-a909-03587bc25ee5",
+                            Id = "92c21599-2954-4a0a-88b3-f8666c16903c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "35cedf19-6eb2-4408-914d-1ad66900c65c",
+                            ConcurrencyStamp = "8388b3ab-c4fc-4dea-a3a4-957bf7e3fafb",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "Qwerty#123",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPUNEAqcNcxGGHdqJaBhLcNgI80cGZXZUhMi7wKsptS9IJTF6BzFh8AlQAaDSqeA5g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6b523a7f-73b4-4ca8-88a6-bb1e1e50d60e",
+                            SecurityStamp = "f0ffad36-90da-4428-a5b8-52898e3b846b",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -241,8 +241,9 @@ namespace ProjektBibliotekaMVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ISBN")
-                        .HasColumnType("int");
+                    b.Property<string>("ISBN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IdCategory")
                         .HasColumnType("int");
@@ -498,19 +499,19 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fd15fc01-de52-46ab-bfbe-2d05b851e786",
+                            Id = "e7eaaf3d-1a9c-41dd-b18c-d0777783ac01",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "428f85d8-9389-4970-9311-b5b1376eceb7",
+                            Id = "5c2968b5-698e-421e-8ff1-200adfdc6551",
                             Name = "Employee",
                             NormalizedName = "Employee"
                         },
                         new
                         {
-                            Id = "bb931e3b-b21d-44e1-9ffb-45de50dcae00",
+                            Id = "8c1005ce-496d-4119-b486-39b1777c946d",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         });
@@ -577,9 +578,37 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "b3fdb3a4-f39b-41e0-a909-03587bc25ee5",
-                            RoleId = "fd15fc01-de52-46ab-bfbe-2d05b851e786"
+                            UserId = "92c21599-2954-4a0a-88b3-f8666c16903c",
+                            RoleId = "e7eaaf3d-1a9c-41dd-b18c-d0777783ac01"
                         });
+                });
+
+            modelBuilder.Entity("ProjektBibliotekaMVC.Models.WaitingBook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdBookCopy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdUser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdBookCopy")
+                        .IsUnique();
+
+                    b.HasIndex("IdUser");
+
+                    b.ToTable("WaitingBook");
                 });
 
             modelBuilder.Entity("BookTag", b =>
@@ -765,6 +794,25 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProjektBibliotekaMVC.Models.WaitingBook", b =>
+                {
+                    b.HasOne("ProjektBibliotekaMVC.Models.BookCopy", "BookCopy")
+                        .WithOne("WaitingBook")
+                        .HasForeignKey("ProjektBibliotekaMVC.Models.WaitingBook", "IdBookCopy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjektBibliotekaMVC.Models.ApplicationUser", "User")
+                        .WithMany("WaitingBooks")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BookCopy");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Borrows");
@@ -778,6 +826,8 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.Navigation("SearchesHistory");
 
                     b.Navigation("UserRoles");
+
+                    b.Navigation("WaitingBooks");
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Book", b =>
@@ -796,6 +846,8 @@ namespace ProjektBibliotekaMVC.Migrations
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.BookCopy", b =>
                 {
                     b.Navigation("Borrow");
+
+                    b.Navigation("WaitingBook");
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Category", b =>

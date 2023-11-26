@@ -34,7 +34,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdTag");
 
-                    b.ToTable("BookTag");
+                    b.ToTable("BookTag", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -199,9 +199,9 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ed5f8844-e71f-4387-b7e8-8aed25406d54",
+                            Id = "92c21599-2954-4a0a-88b3-f8666c16903c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "638961dd-025f-4802-8180-e8785de27fc0",
+                            ConcurrencyStamp = "8388b3ab-c4fc-4dea-a3a4-957bf7e3fafb",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -209,7 +209,7 @@ namespace ProjektBibliotekaMVC.Migrations
                             NormalizedUserName = "ADMIN@ADMIN.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEPUNEAqcNcxGGHdqJaBhLcNgI80cGZXZUhMi7wKsptS9IJTF6BzFh8AlQAaDSqeA5g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "575d17e2-2684-4667-82dc-573e7c30a95c",
+                            SecurityStamp = "f0ffad36-90da-4428-a5b8-52898e3b846b",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -257,7 +257,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.BookCopy", b =>
@@ -279,7 +279,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdBook");
 
-                    b.ToTable("BooksCopies");
+                    b.ToTable("BooksCopies", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Borrow", b =>
@@ -307,7 +307,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Borrows");
+                    b.ToTable("Borrows", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.BorrowHistory", b =>
@@ -334,7 +334,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("BorrowsHistory");
+                    b.ToTable("BorrowsHistory", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Cart", b =>
@@ -358,7 +358,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Category", b =>
@@ -387,7 +387,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Limit", b =>
@@ -406,7 +406,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Limits");
+                    b.ToTable("Limits", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.News", b =>
@@ -430,7 +430,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Newses");
+                    b.ToTable("Newses", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Queue", b =>
@@ -464,7 +464,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Queues");
+                    b.ToTable("Queues", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Role", b =>
@@ -496,19 +496,19 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6f62b845-6858-419c-b98c-44901adaf1bf",
+                            Id = "e7eaaf3d-1a9c-41dd-b18c-d0777783ac01",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "f90f1fad-4d52-42f9-873e-5455e4466e03",
+                            Id = "5c2968b5-698e-421e-8ff1-200adfdc6551",
                             Name = "Employee",
                             NormalizedName = "Employee"
                         },
                         new
                         {
-                            Id = "0e8df28a-dfd2-400f-baa8-39c4436a6c64",
+                            Id = "8c1005ce-496d-4119-b486-39b1777c946d",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         });
@@ -538,7 +538,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("SearchesHistory");
+                    b.ToTable("SearchesHistory", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.Tag", b =>
@@ -555,7 +555,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.UserRole", b =>
@@ -575,8 +575,8 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "ed5f8844-e71f-4387-b7e8-8aed25406d54",
-                            RoleId = "6f62b845-6858-419c-b98c-44901adaf1bf"
+                            UserId = "92c21599-2954-4a0a-88b3-f8666c16903c",
+                            RoleId = "e7eaaf3d-1a9c-41dd-b18c-d0777783ac01"
                         });
                 });
 
@@ -605,7 +605,7 @@ namespace ProjektBibliotekaMVC.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("WaitingBook");
+                    b.ToTable("WaitingBook", (string)null);
                 });
 
             modelBuilder.Entity("BookTag", b =>

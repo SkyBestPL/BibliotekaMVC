@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<ProjektBibliotekaMVC.Models.Book>
+@inject ProjektBibliotekaMVC.Data.ApplicationDbContext _context
 
 @{
     ViewData["Title"] = "BooksList";
+    var userId = ViewBag.UserId as string;
 }
 
 <h1 class="margin-bottom-small text-center">Nasze Książki</h1>
@@ -23,7 +25,20 @@
                     <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
                     @if (item.InMagazineCount > 0)
                     {
-                        <button class="button-tocart" onclick="addToCart('@item.Id')">Dodaj do koszyka</button>
+                        var bookCopy = _context.BooksCopies.FirstOrDefault(bc => bc.Book.Id == item.Id && bc.Status == "InMagazine");
+                        var isInCart = _context.Carts.FirstOrDefault(c => c.IdBook == bookCopy.Id /*&& c.IdUser == userId*/);
+                        <p>@bookCopy.Id</p>
+                        if (isInCart == null)
+                        {
+                            <form method="post" action="@Url.Action("AddToCart", "Books")">
+                                <input type="hidden" name="bookCopyId" value="@bookCopy.Id" />
+                                <button type="submit" class="button-tocart">Dodaj do koszyka</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button disabled style="background-color: grey; cursor: not-allowed;">Książka w koszyku</button>
+                        }
                     }
                     else
                     {
@@ -37,5 +52,3 @@
         </li>
     }
 </ul>
-
-
