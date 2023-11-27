@@ -25,13 +25,11 @@
                     <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
                     @if (item.InMagazineCount > 0)
                     {
-                        var bookCopy = _context.BooksCopies.FirstOrDefault(bc => bc.Book.Id == item.Id && bc.Status == "InMagazine");
-                        var isInCart = _context.Carts.FirstOrDefault(c => c.IdBook == bookCopy.Id /*&& c.IdUser == userId*/);
-                        <p>@bookCopy.Id</p>
+                        var isInCart = _context.Carts.FirstOrDefault(c => c.IdBook == item.Id && c.IdUser == userId);
                         if (isInCart == null)
                         {
                             <form method="post" action="@Url.Action("AddToCart", "Books")">
-                                <input type="hidden" name="bookCopyId" value="@bookCopy.Id" />
+                                <input type="hidden" name="bookId" value="@item.Id" />
                                 <button type="submit" class="button-tocart">Dodaj do koszyka</button>
                             </form>
                         }

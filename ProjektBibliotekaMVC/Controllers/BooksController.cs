@@ -37,8 +37,11 @@ namespace BibliotekaMVC.Controllers
         public async Task<IActionResult> BooksList(string searchString)
         {
             var books = _context.Books.ToList();
-            var user = _userManager.GetUserAsync(User);
-            ViewBag.UserId = user.Id;
+            var user = await _userManager.GetUserAsync(User);
+            if(user != null)
+            {
+                ViewBag.UserId = user.Id;
+            }
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -214,7 +217,7 @@ namespace BibliotekaMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int bookCopyId)
+        public async Task<IActionResult> AddToCart(int bookId)
         {
             try
             {
@@ -225,8 +228,7 @@ namespace BibliotekaMVC.Controllers
                     return NotFound("Użytkownik nie został znaleziony.");
                 }
 
-                var bookCopy = _context.BooksCopies.FirstOrDefault(b => b.Id == bookCopyId);
-                var book = _context.Books.FirstOrDefault(b => b.Id == bookCopy.IdBook);
+                var book = _context.Books.FirstOrDefault(b => b.Id == bookId);
 
                 if (book == null)
                 {
@@ -235,9 +237,9 @@ namespace BibliotekaMVC.Controllers
 
                 var newCart = new Cart
                 {
-                    IdBook = bookCopy.Id,
+                    IdBook = book.Id,
                     IdUser = user.Id,
-                    Book = bookCopy.Book,
+                    Book = book,
                     User = user,
                 };
 
