@@ -2,7 +2,7 @@
 
 @model IEnumerable<ProjektBibliotekaMVC.Models.Cart>
 
-<h2>Twój koszyk</h2>
+<h2>Podsumowanie zamówienia</h2>
 
 @if (Model.Any())
 {
@@ -12,36 +12,39 @@
                 <th>Nazwa książki</th>
                 <th>Autor</th>
                 <th>Numer ISBN</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var cartItem in Model)
             {
-
+                
                 var book = _context.Books.FirstOrDefault(b => b.Id == cartItem.IdBook);
                 <tr>
                     <td>@book.Title</td>
                     <td>@book.AuthorName @book.AuthorSurename</td>
                     <td>@book.ISBN</td>
-                    <td>
-                        <form method="post" action="@Url.Action("RemoveFromCart", "Cart")">
-                            <input type="hidden" name="cartItemId" value="@cartItem.Id" />
-                            <button type="submit">Usuń z koszyka</button>
-                        </form>
-                    </td>
                 </tr>
             }
         </tbody>
     </table>
 
+    <p>Książki będą dostępne do odbioru w naszej bibliotece na ulicy Bibliotecznej 42</p>
+
     <div>
-        <form method="post" action="@Url.Action("Checkout", "Cart")">
-            <button type="submit" class="button-tocart">Wypożycz książki</button>
+        <form method="post" action="@Url.Action("PlaceOrder", "Cart")">
+            @foreach (var cartItem in Model)
+            {
+                var book = _context.Books.FirstOrDefault(b => b.Id == cartItem.IdBook);
+                <input type="hidden" name="bookId" value="@book.Id" />
+            }
+            <button type="submit" class="button-tocart">Zarezerwuj wybrane książki do odbioru</button>
+        </form>
+        <form method="post" action="@Url.Action("Cart", "Cart")">
+            <button type="submit">Anuluj</button>
         </form>
     </div>
 }
 else
 {
-    <p>Twój koszyk jest pusty.</p>
+    <p>Twoje zamówienie jest puste.</p>
 }

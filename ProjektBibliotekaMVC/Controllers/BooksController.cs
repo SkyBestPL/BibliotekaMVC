@@ -225,7 +225,7 @@ namespace BibliotekaMVC.Controllers
 
                 if (user == null)
                 {
-                    return NotFound("Użytkownik nie został znaleziony.");
+                    return Redirect("/Identity/Account/Login");
                 }
 
                 var book = _context.Books.FirstOrDefault(b => b.Id == bookId);

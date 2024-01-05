@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,79 @@ namespace ProjektBibliotekaMVC.Controllers
             var cartItems = _context.Carts.Where(c => c.IdUser == user.Id).ToList();
 
             return View(cartItems);
+        }
+
+        public async Task<IActionResult> Checkout()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var cartItems = _context.Carts.Where(c => c.IdUser == user.Id).ToList();
+
+            return View(cartItems);
+        }
+
+        public async Task<IActionResult> BorrowedBooks()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var waitingBooks = _context.WaitingBook.Where(c => c.IdUser == user.Id).ToList();
+
+            ViewBag.BorrowedBooks = _context.Borrows.Where(b => b.IdUser == user.Id).ToList();
+
+            return View(waitingBooks);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PlaceOrder(List<int> bookId)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+
+            foreach (var id in bookId)
+            {
+                var firstAvailableCopyId = _context.BooksCopies
+                    .Where(bc => bc.IdBook == id && bc.Status == "InMagazine")
+                    .OrderBy(bc => bc.Id)
+                    .Select(bc => bc.Id)
+                    .FirstOrDefault();
+
+                if (firstAvailableCopyId != 0)
+                {
+                    var reservedCopy = _context.BooksCopies.Find(firstAvailableCopyId);
+                    reservedCopy.Status = "Waiting";
+                    _context.SaveChanges();
+
+                    var waitingBook = new WaitingBook
+                    {
+                        IdBookCopy = firstAvailableCopyId,
+                        IdUser = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                        Date = DateTime.Now,
+                        BookCopy = reservedCopy, //tutaj przypisuję BookCopy ale później i tak jest null
+                        User = user
+                    };
+
+                    _context.WaitingBook.Add(waitingBook);
+
+                    reservedCopy.WaitingBook = waitingBook;
+
+                    await _context.SaveChangesAsync();
+
+                    var cartItem = await _context.Carts
+                    .FirstOrDefaultAsync(ci => ci.IdBook == reservedCopy.IdBook && ci.IdUser == user.Id);
+
+                    _context.Carts.Remove(cartItem);
+
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Cart");
+                }
+                else
+                {
+                    //brak kopii
+                }
+            }
+
+            return RedirectToAction("Cart");
         }
 
         public CartController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)

@@ -1,0 +1,84 @@
+﻿@inject ProjektBibliotekaMVC.Data.ApplicationDbContext _context
+
+@model IEnumerable<ProjektBibliotekaMVC.Models.WaitingBook>
+
+<h2>Książki oczekujące na odbiór</h2>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nazwa książki</th>
+                <th>Autor</th>
+                <th>Numer ISBN</th>
+                <th>Data rezerwacji</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var waitingBook in Model)
+            {
+                //var book = _context.Books.FirstOrDefault(b => b.Id == waitingBook.BookCopy.IdBook);
+                //przypisuję mu BookCopy w metodzie PlaceOrder w CartsController, a mimo tego jest null
+
+                var bookCopy = _context.BooksCopies.FirstOrDefault(b => b.Id == waitingBook.IdBookCopy);
+                var book = _context.Books.FirstOrDefault(b => b.Id == bookCopy.IdBook);
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.AuthorName @book.AuthorSurename</td>
+                    <td>@book.ISBN</td>
+                    <td>@waitingBook.Date</td>
+                    <td>
+                        <!--<form method="post" action="@Url.Action("RemoveFromWaiting", "Cart")">
+                            <input type="hidden" name="cartItemId" value="@waitingBook.Id" />
+                            <button type="submit">Anuluj rezerwację książki</button>
+                        </form>-->
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Brak oczekujących książek</p>
+}
+
+<h2>Wypożyczone książki</h2>
+
+@{List<Borrow> borrowed = ViewBag.BorrowedBooks;}
+
+@if (borrowed != null && borrowed.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nazwa książki</th>
+                <th>Autor</th>
+                <th>Numer ISBN</th>
+                <th>Data wypożyczenia</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var borrowedBook in ViewBag.BorrowedBooks)
+            {
+                Borrow borrowedBook2 = borrowedBook;
+                var bookCopy = _context.BooksCopies.FirstOrDefault(b => b.Id == borrowedBook2.IdBookCopy);
+                var book = _context.Books.FirstOrDefault(b => b.Id == bookCopy.IdBook);
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.AuthorName @book.AuthorSurename</td>
+                    <td>@book.ISBN</td>
+                    <td>@borrowedBook2.Date</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Brak wypożyczonych książek</p>
+}
