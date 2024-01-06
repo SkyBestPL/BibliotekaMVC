@@ -15,6 +15,22 @@
     </form>
     @foreach (var item in Model)
     {
+        List<BookCopy> bookCopies = _context.BooksCopies
+        .Where(bc => bc.IdBook == item.Id)
+        .ToList();
+
+        bool cart=false;
+        foreach (var book in bookCopies)
+        {
+            var waitingBook = _context.WaitingBook
+            .FirstOrDefault(wb => wb.IdBookCopy == book.Id && wb.IdUser == userId);
+            if(waitingBook!=null){ cart = true; break; }
+
+            var borrowedBook = _context.Borrows
+            .FirstOrDefault(wb => wb.IdBookCopy == book.Id && wb.IdUser == userId);
+            if (borrowedBook != null) { cart = true; break; }
+        }
+
         <li class="book-item">
             <div class="book-info">
                 <div>
@@ -23,7 +39,7 @@
                     <p>Autor: @Html.DisplayFor(modelItem => item.AuthorName) @Html.DisplayFor(modelItem => item.AuthorSurename)</p>
                     <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCategory)</p>
                     <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
-                    @if (item.InMagazineCount > 0)
+                    @if (item.InMagazineCount > 0 && cart == false)
                     {
                         var isInCart = _context.Carts.FirstOrDefault(c => c.IdBook == item.Id && c.IdUser == userId);
                         if (isInCart == null)
@@ -37,6 +53,10 @@
                         {
                             <button disabled style="background-color: grey; cursor: not-allowed;">Książka w koszyku</button>
                         }
+                    }
+                    else if(cart==true)
+                    {
+                        <button disabled style="background-color: grey; cursor: not-allowed;">Wypożyczono</button>
                     }
                     else
                     {

@@ -67,7 +67,12 @@ namespace ProjektBibliotekaMVC.Controllers
                 if (firstAvailableCopyId != 0)
                 {
                     var reservedCopy = _context.BooksCopies.Find(firstAvailableCopyId);
-                    reservedCopy.Status = "Waiting";
+                    var reservedBook = _context.Books.Find(id);
+                    reservedCopy.Status = "IsWaiting";
+                    //reservedCopy.Book.InMagazineCount--;
+                    //reservedCopy.Book.WaitingCount++;
+                    reservedBook.InMagazineCount--;
+                    reservedBook.WaitingCount++;
                     _context.SaveChanges();
 
                     var waitingBook = new WaitingBook
@@ -96,7 +101,7 @@ namespace ProjektBibliotekaMVC.Controllers
                 }
                 else
                 {
-                    //brak kopii
+                    return RedirectToAction("Cart");
                 }
             }
 
