@@ -19,6 +19,13 @@
         .Where(bc => bc.IdBook == item.Id)
         .ToList();
 
+        List<Queue> queues = _context.Queues
+        .Where(bc => bc.IdBook == item.Id)
+        .ToList();
+
+        var queue = _context.Queues
+        .FirstOrDefault(q => q.IdBook == item.Id && q.IdUser == userId);
+
         bool cart=false;
         foreach (var book in bookCopies)
         {
@@ -51,16 +58,41 @@
                         }
                         else
                         {
-                            <button disabled style="background-color: grey; cursor: not-allowed;">Książka w koszyku</button>
+                            <button disabled style="background-color: lightgreen; cursor: not-allowed;">Książka w koszyku</button>
                         }
                     }
                     else if(cart==true)
                     {
-                        <button disabled style="background-color: grey; cursor: not-allowed;">Wypożyczono</button>
+                        <button disabled style="background-color: palevioletred; cursor: not-allowed;">Wypożyczono</button>
+                    }
+                    else if(cart == false && queue == null)
+                    {
+                        <table>
+                            <tr>
+                                <td style="width: 100px;">
+                                    <button disabled style="background-color: grey; cursor: not-allowed; width: 100%;">Niedostępne</button>
+                                </td>
+                                <td style="width: 180px; padding-left: 10px;">
+                                    <form method="post" action="@Url.Action("AddToQueue", "Books")">
+                                        <input type="hidden" name="bookId" value="@item.Id" />
+                                        <button type="submit" class="button-tocart" style="background-color: #426AF4; padding: 5px 10px; width: 100%;">Zapisz się do kolejki</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
                     }
                     else
                     {
-                        <button disabled style="background-color: grey; cursor: not-allowed;">Niedostępne</button>
+                        <table>
+                            <tr>
+                                <td style="width: 100px;">
+                                    <button disabled style="background-color: grey; cursor: not-allowed; width: 100%;">Niedostępne</button>
+                                </td>
+                                <td style="width: 130px;">
+                                    <button disabled style="background-color: lightskyblue; cursor: not-allowed; width: 100%;">W kolejce</button>
+                                </td>
+                            </tr>
+                        </table>
                     }
                 </div>
             </div>

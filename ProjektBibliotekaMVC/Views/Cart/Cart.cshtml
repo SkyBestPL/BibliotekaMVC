@@ -4,6 +4,11 @@
 
 <h2>Twój koszyk</h2>
 
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
 @if (Model.Any())
 {
     <table class="table">

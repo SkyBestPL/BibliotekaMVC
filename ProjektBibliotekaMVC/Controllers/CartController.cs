@@ -27,6 +27,17 @@ namespace ProjektBibliotekaMVC.Controllers
 
             var cartItems = _context.Carts.Where(c => c.IdUser == user.Id).ToList();
 
+            for (int i = cartItems.Count - 1; i >= 0; i--)
+            {
+                var c = cartItems[i];
+                var bookCopies = _context.BooksCopies.Where(bc => bc.IdBook == c.IdBook && bc.Status == "InMagazine").ToList();
+                if (bookCopies.Count == 0)
+                {
+                    cartItems.RemoveAt(i);
+                    await RemoveFromCart(c.Id);
+                    TempData["Message"] = "Usunięto jedną lub więcej książek, które nie są już dostępne.";
+                }
+            }
             return View(cartItems);
         }
 

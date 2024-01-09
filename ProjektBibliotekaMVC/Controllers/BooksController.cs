@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -248,6 +249,56 @@ namespace BibliotekaMVC.Controllers
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("BooksList");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Wystąpił błąd: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddToQueue(int bookId)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
+
+                var book = _context.Books.FirstOrDefault(b => b.Id == bookId);
+
+                if (book == null)
+                {
+                    return NotFound("Książka nie została znaleziona.");
+                }
+
+
+                var existingQueueItem = _context.Queues
+                    .FirstOrDefault(q => q.IdBook == bookId && q.IdUser == user.Id);
+
+                if (existingQueueItem == null)
+                {
+                    var queueItem = new Queue
+                    {
+                        IdBook = bookId,
+                        IdUser = user.Id,
+                        Date = DateTime.Now,
+                        Book = book,
+                        User = user
+                    };
+
+                    _context.Queues.Add(queueItem);
+                    _context.SaveChanges();
+
+                    return RedirectToAction("BooksList");
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Użytkownik już jest w kolejce dla tej książki." });
+                }
             }
             catch (Exception ex)
             {
