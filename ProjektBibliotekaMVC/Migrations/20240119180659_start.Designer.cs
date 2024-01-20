@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjektBibliotekaMVC.Data;
 
@@ -11,13 +12,15 @@ using ProjektBibliotekaMVC.Data;
 namespace ProjektBibliotekaMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240119180659_start")]
+    partial class start
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.15")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -199,9 +202,9 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9a9140cc-cff2-4589-900c-2086fa1febf2",
+                            Id = "53fed8eb-140d-4144-b27b-211ef7f31dd4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4d7eb2d3-b278-42b2-a6ac-7cbe3a1948d5",
+                            ConcurrencyStamp = "8e9ba684-032d-4dcf-ae6b-2f1e868283f8",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -209,7 +212,7 @@ namespace ProjektBibliotekaMVC.Migrations
                             NormalizedUserName = "ADMIN@ADMIN.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEPUNEAqcNcxGGHdqJaBhLcNgI80cGZXZUhMi7wKsptS9IJTF6BzFh8AlQAaDSqeA5g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "59e44b58-9250-4b12-a24d-572301598f28",
+                            SecurityStamp = "ce976d78-e7df-4c16-a352-7c32775e641c",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -407,14 +410,6 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Limits");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            InMagazineLimit = 100,
-                            WaitingLimit = 100
-                        });
                 });
 
             modelBuilder.Entity("ProjektBibliotekaMVC.Models.News", b =>
@@ -504,19 +499,19 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "28bdaded-17e9-48ca-9565-1a43604992e4",
+                            Id = "3ea09afa-0bf7-47d4-a6d2-ce789d245dd7",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "6a2c0431-f04d-470d-8214-a169aec23fea",
+                            Id = "cd7ac112-dd8c-4a00-bacb-8d7f11f314c5",
                             Name = "Employee",
                             NormalizedName = "Employee"
                         },
                         new
                         {
-                            Id = "fa11490d-848a-46c1-aa9c-e0e40f47489d",
+                            Id = "a3729678-f532-41bc-8177-70bf1fd0a3e4",
                             Name = "Customer",
                             NormalizedName = "Customer"
                         });
@@ -583,8 +578,8 @@ namespace ProjektBibliotekaMVC.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "9a9140cc-cff2-4589-900c-2086fa1febf2",
-                            RoleId = "28bdaded-17e9-48ca-9565-1a43604992e4"
+                            UserId = "53fed8eb-140d-4144-b27b-211ef7f31dd4",
+                            RoleId = "3ea09afa-0bf7-47d4-a6d2-ce789d245dd7"
                         });
                 });
 

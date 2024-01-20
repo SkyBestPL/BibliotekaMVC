@@ -61,7 +61,7 @@
                 @Html.DisplayFor(modelItem => item.InMagazineCount)
             </td>
             <td>
-                <a class="nav-link text-dark" asp-area="" asp-route-id="@item.Id" asp-controller="Books" asp-action="ViewCopies"></a> |
+                <a class="nav-link text-dark" asp-area="" asp-route-id="@item.Id" asp-controller="Books" asp-action="ViewCopies">Manage copies</a> |
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>

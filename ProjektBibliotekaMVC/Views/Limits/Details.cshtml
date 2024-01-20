@@ -1,0 +1,32 @@
+﻿@model ProjektBibliotekaMVC.Models.Limit
+
+<div>
+    <h2>Limit</h2>
+    <hr />
+    <p>In magazine total: @ViewBag.MagazineTotal</p>
+    <p>Waiting total: @ViewBag.WaitingTotal</p>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.InMagazineLimit)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.InMagazineLimit)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.WaitingLimit)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.WaitingLimit)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (Model == null)
+    {
+        <a asp-action="Create">Create New</a>
+    }
+    else
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+    }
+</div>

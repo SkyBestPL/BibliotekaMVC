@@ -148,6 +148,12 @@ namespace ProjektBibliotekaMVC.Data
             };
 
             builder.Entity<UserRole>().HasData(userRoleAdmin);
+
+            var limit = new Limit();
+            limit.Id= 1;
+            limit.WaitingLimit = 100;
+            limit.InMagazineLimit = 100;
+            builder.Entity<Limit>().HasData(limit);
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Book> Books { get; set; }

@@ -67,6 +67,19 @@ namespace ProjektBibliotekaMVC.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
+            var books = _context.Books.ToList();
+            int waitingTotal = 0;
+            foreach (var b in books)
+            {
+                waitingTotal += b.WaitingCount;
+            }
+            int waitingLimit = _context.Limits.FirstOrDefault().WaitingLimit;
+            if (waitingTotal + bookId.Count > waitingLimit) 
+            {
+                ViewBag.WaitingLimitExceeded = "Waiting limit exceeded!";
+                return RedirectToAction(nameof(Checkout));
+            }            
+
             foreach (var id in bookId)
             {
                 var firstAvailableCopyId = _context.BooksCopies

@@ -37,6 +37,7 @@
                 var book = _context.Books.FirstOrDefault(b => b.Id == cartItem.IdBook);
                 <input type="hidden" name="bookId" value="@book.Id" />
             }
+            <p>@ViewBag.WaitingLimitExceeded</p>
             <button type="submit" class="button-tocart">Zarezerwuj wybrane książki do odbioru</button>
         </form>
         <form method="post" action="@Url.Action("Cart", "Cart")">

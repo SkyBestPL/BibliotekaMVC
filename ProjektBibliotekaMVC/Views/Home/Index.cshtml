@@ -1,4 +1,7 @@
-﻿@{
+﻿@model ProjektBibliotekaMVC.Utility.BooksAndNews
+@inject ProjektBibliotekaMVC.Data.ApplicationDbContext _context
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -7,18 +10,110 @@
     <h2>Aktualności:</h2>
     <div class="kontener">
         <div class="book-list">
-            <div class="book">
-                <h2>Premiera książki "Nad Niemnem" już w grudniu!</h2>
-                <p>Bestseller Elizy Orzeszkowej bęzie dostępny w naszym serwisie już niedługo!</p>
-            </div>
-            <div class="book">
-                <h2>Rabat 15% na wszystkie książki za polecenie nas znajomym!</h2>
-                <p>Poleć nas znajomemu a uzyskasz jednorazowy rabat na wszystkie książki! Promocja trwa do końca roku.</p>
-            </div>
-            <div class="book">
-                <h2>"Chłopi" Władysława Stanisława Reymonta już w sprzedaży!</h2>
-                <p>Bestseller, który ostatnio otrzymał kinową adaptację, jest dostępny do nabycia na naszej stronie!</p>
-            </div>
+            @foreach(var news in Model.News)
+            {
+                <div class="book">
+                    <h2>@news.Title</h2>
+                    <p>@news.Body</p>
+                </div>
+            }     
         </div>
     </div>
+    @{
+        ViewData["Title"] = "BooksList";
+        var userId = ViewBag.UserId as string;
+    }
+
+    <h1 class="margin-bottom-small text-center">Ostatnio dodane</h1>
+
+    <ul class="book-list-2">
+        @foreach (var item in Model.Books)
+        {
+            List<BookCopy> bookCopies = _context.BooksCopies
+            .Where(bc => bc.IdBook == item.Id)
+            .ToList();
+
+            List<Queue> queues = _context.Queues
+            .Where(bc => bc.IdBook == item.Id)
+            .ToList();
+
+            var queue = _context.Queues
+            .FirstOrDefault(q => q.IdBook == item.Id && q.IdUser == userId);
+
+            bool cart = false;
+            foreach (var book in bookCopies)
+            {
+                var waitingBook = _context.WaitingBook
+                .FirstOrDefault(wb => wb.IdBookCopy == book.Id && wb.IdUser == userId);
+                if (waitingBook != null) { cart = true; break; }
+
+                var borrowedBook = _context.Borrows
+                .FirstOrDefault(wb => wb.IdBookCopy == book.Id && wb.IdUser == userId);
+                if (borrowedBook != null) { cart = true; break; }
+            }
+
+            <li class="book-item">
+                <div class="book-info">
+                    <div>
+                        <p><strong>@Html.DisplayFor(modelItem => item.Title)</strong></p>
+                        <p>Opis książki: <br> @Html.DisplayFor(modelItem => item.Contents)</p>
+                        <p>Autor: @Html.DisplayFor(modelItem => item.AuthorName) @Html.DisplayFor(modelItem => item.AuthorSurename)</p>
+                        <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCategory)</p>
+                        <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
+                        @if (item.InMagazineCount > 0 && cart == false)
+                        {
+                            var isInCart = _context.Carts.FirstOrDefault(c => c.IdBook == item.Id && c.IdUser == userId);
+                            if (isInCart == null)
+                            {
+                                <form method="post" action="@Url.Action("AddToCart", "Books")">
+                                    <input type="hidden" name="bookId" value="@item.Id" />
+                                    <button type="submit" class="button-tocart">Dodaj do koszyka</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button disabled style="background-color: lightgreen; cursor: not-allowed;">Książka w koszyku</button>
+                            }
+                        }
+                        else if (cart == true)
+                        {
+                            <button disabled style="background-color: palevioletred; cursor: not-allowed;">Wypożyczono</button>
+                        }
+                        else if (cart == false && queue == null)
+                        {
+                            <table>
+                                <tr>
+                                    <td style="width: 100px;">
+                                        <button disabled style="background-color: grey; cursor: not-allowed; width: 100%;">Niedostępne</button>
+                                    </td>
+                                    <td style="width: 180px; padding-left: 10px;">
+                                        <form method="post" action="@Url.Action("AddToQueue", "Books")">
+                                            <input type="hidden" name="bookId" value="@item.Id" />
+                                            <button type="submit" class="button-tocart" style="background-color: #426AF4; padding: 5px 10px; width: 100%;">Zapisz się do kolejki</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                        else
+                        {
+                            <table>
+                                <tr>
+                                    <td style="width: 100px;">
+                                        <button disabled style="background-color: grey; cursor: not-allowed; width: 100%;">Niedostępne</button>
+                                    </td>
+                                    <td style="width: 130px;">
+                                        <button disabled style="background-color: lightskyblue; cursor: not-allowed; width: 100%;">W kolejce</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+                </div>
+                <div class="book-image">
+                    <img src="@Url.Content("~/Images/" + item.Title + ".png")" alt="Obrazek książki" style="max-width: 100%; max-height: 100%;">
+                </div>
+            </li>
+        }
+    </ul>
 </div>

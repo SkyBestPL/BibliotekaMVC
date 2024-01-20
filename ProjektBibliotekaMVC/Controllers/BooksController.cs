@@ -93,6 +93,16 @@ namespace BibliotekaMVC.Controllers
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Create([Bind("Id,AuthorName,AuthorSurename,IdCategory,ISBN,Title,Contents, InMagazineCount")] Book bookEntity)
         {
+            var books = _context.Books.ToList();
+            int magazineTotal = 0;
+            foreach (var b in books)
+            {
+                magazineTotal += b.InMagazineCount;
+            }
+            int magazineLimit = _context.Limits.FirstOrDefault().InMagazineLimit;
+            if (magazineTotal + bookEntity.InMagazineCount > magazineLimit)
+                ModelState.AddModelError("Limit", "Magazine limit exceeded!");
+
             if (ModelState.IsValid)
             {
                 _context.Add(bookEntity);

@@ -95,6 +95,19 @@ namespace ProjektBibliotekaMVC.Controllers
             bookCopy.IdBook = bookCopyAmount.IdBook;
             bookCopy.Id = 0;
             Book book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookCopyAmount.IdBook);
+
+            //sprawdzenie limitu magazynu
+            var books = _context.Books.ToList();
+            int magazineTotal = 0;
+            foreach (var b in books)
+            {
+                magazineTotal += b.InMagazineCount;
+            }
+            int magazineLimit = _context.Limits.FirstOrDefault().InMagazineLimit;
+            if (magazineTotal + bookCopyAmount.Amount > magazineLimit)
+                ModelState.AddModelError("Limit", "Magazine limit exceeded!");
+
+
             if (ModelState.IsValid)
             {
                 for (int i = 0; i < bookCopyAmount.Amount; i++)
@@ -122,16 +135,25 @@ namespace ProjektBibliotekaMVC.Controllers
             {
                 return NotFound();
             }
-
-            var bookCopy = await _context.BooksCopies.FindAsync(id);
+            var bookCopyAmount = new BookCopyInputModel();
+            var bookCopy = _context.BooksCopies.Where(u => u.Id == id).Include(u => u.WaitingBook).ThenInclude(u => u.User).Include(u => u.Borrow).ThenInclude(u => u.User).FirstOrDefault();
             if (bookCopy == null)
             {
                 return NotFound();
             }
-            var bookCopyAmount = new BookCopyInputModel();
+            if (bookCopy.WaitingBook != null)
+            {
+                bookCopyAmount.Email = bookCopy.WaitingBook.User.Email;
+            } 
+            else if (bookCopy.Borrow != null) 
+            {
+                bookCopyAmount.Email = bookCopy.Borrow.User.Email;
+            }
+            
             bookCopyAmount.Status = bookCopy.Status;
             bookCopyAmount.IdBookCopy = bookCopy.Id;
             bookCopyAmount.IdBook = bookCopy.IdBook;
+
             //ViewData["IdBook"] = new SelectList(_context.Books, "Id", "Contents", bookCopy.IdBook);
             return View(bookCopyAmount);
         }
@@ -150,7 +172,30 @@ namespace ProjektBibliotekaMVC.Controllers
                 return NotFound();
             }
             Book book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookCopy.IdBook);
-            if (ModelState.ErrorCount <= 1)
+
+            //sprawdzenie limitu magazynu i poczekalni
+            var books = _context.Books.ToList();
+            int magazineTotal = 0, waitingTotal = 0;
+            foreach (var b in books)
+            {
+                magazineTotal += b.InMagazineCount;
+                waitingTotal+= b.WaitingCount;
+            }
+            if (bookCopyAmount.NewStatus == SD.BookInMagazine)
+            {
+                int magazineLimit = _context.Limits.FirstOrDefault().InMagazineLimit;
+                if (magazineTotal + 1 > magazineLimit)
+                    ModelState.AddModelError("Limit", "Magazine limit exceeded!");
+            }
+            else if (bookCopyAmount.NewStatus == SD.BookIsWaiting)
+            {
+                int waitingLimit = _context.Limits.FirstOrDefault().WaitingLimit;
+                if (waitingTotal + 1 > waitingLimit)
+                    ModelState.AddModelError("Limit", "Waiting limit exceeded!");
+            }
+
+
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -181,6 +226,11 @@ namespace ProjektBibliotekaMVC.Controllers
                             borrow.IdBookCopy = bookCopy.Id;
                             borrow.Date = DateTime.Now;
                             _context.Add(borrow);
+                            BorrowHistory borrowHistory = new BorrowHistory();
+                            borrowHistory.Date = DateTime.Now;
+                            borrowHistory.IdUser= user.Id;
+                            borrowHistory.IdBook = bookCopy.IdBook;
+                            _context.Add(borrowHistory);
                             book.BorrowedCount++;
                         }
 
@@ -224,7 +274,7 @@ namespace ProjektBibliotekaMVC.Controllers
                 return RedirectToAction(nameof(IndexForBook), new RouteValueDictionary(new { controller = "BookCopies", action = "IndexForBook", id = bookCopy.IdBook }));
             }
             //ViewData["IdBook"] = new SelectList(_context.Books, "Id", "Contents", bookCopy.IdBook);
-            return View(bookCopy);
+            return View(bookCopyAmount);
         }
 
         // GET: BookCopies/Delete/5
