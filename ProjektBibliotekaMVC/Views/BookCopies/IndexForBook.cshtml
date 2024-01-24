@@ -4,6 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
 <h3>Title: @ViewBag.BookTitle</h3>
 <p>In magazine: @ViewBag.InMagazineCount</p>
 <p>Waiting to be picked up: @ViewBag.WaitingCount</p>

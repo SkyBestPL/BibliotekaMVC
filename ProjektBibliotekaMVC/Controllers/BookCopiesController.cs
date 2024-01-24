@@ -202,9 +202,42 @@ namespace ProjektBibliotekaMVC.Controllers
                     var user = _context.Users.FirstOrDefault(u => u.Email == (string)bookCopyAmount.Email);
                     if (bookCopyAmount.Status != bookCopyAmount.NewStatus)
                     {
+                        Queue queueItem = null;
                         if (bookCopyAmount.NewStatus == SD.BookInMagazine)
                         {
-                            book.InMagazineCount++;
+                            queueItem = _context.Queues
+                           .Where(q => q.IdBook == book.Id)
+                           .OrderBy(q => q.Date)
+                           .FirstOrDefault();
+
+                            if (queueItem == null)
+                            {
+                                book.InMagazineCount++;
+                            }
+                            else
+                            {
+                                if(bookCopyAmount.Status == SD.BookIsBorrowed)
+                                {
+                                    var borrowDel = _context.Borrows.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
+                                    _context.Remove(borrowDel);
+                                    book.BorrowedCount--;
+                                }
+                                else
+                                {
+                                    var waitingDel = _context.WaitingBook.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
+                                    _context.Remove(waitingDel);
+                                }
+
+                                var waiting = new WaitingBook();
+                                waiting.IdUser = queueItem.IdUser;
+                                waiting.IdBookCopy = bookCopy.Id;
+                                waiting.Date = DateTime.Now;
+                                _context.Add(waiting);
+                                _context.Remove(queueItem);
+                                bookCopyAmount.NewStatus = SD.BookIsWaiting;
+                                book.WaitingCount++;
+                                TempData["Message"] = "Książka została przypisana kolejnej osobie w kolejce";
+                            }
                         }
                         else if (bookCopyAmount.NewStatus == SD.BookIsWaiting)
                         {
@@ -238,7 +271,7 @@ namespace ProjektBibliotekaMVC.Controllers
                         {
                             book.InMagazineCount--;
                         }
-                        else if (bookCopyAmount.Status == SD.BookIsWaiting)
+                        else if (bookCopyAmount.Status == SD.BookIsWaiting && queueItem == null)
                         {
                             if (user == null)
                                 return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
@@ -246,7 +279,7 @@ namespace ProjektBibliotekaMVC.Controllers
                             _context.Remove(waitingBook);
                             book.WaitingCount--;
                         }
-                        else if (bookCopyAmount.Status == SD.BookIsBorrowed)
+                        else if (bookCopyAmount.Status == SD.BookIsBorrowed && queueItem == null)
                         {
                             if (user == null)
                                 return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
