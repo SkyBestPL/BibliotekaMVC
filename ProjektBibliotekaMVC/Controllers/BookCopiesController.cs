@@ -105,8 +105,15 @@ namespace ProjektBibliotekaMVC.Controllers
             }
             int magazineLimit = _context.Limits.FirstOrDefault().InMagazineLimit;
             if (magazineTotal + bookCopyAmount.Amount > magazineLimit)
-                ModelState.AddModelError("Limit", "Magazine limit exceeded!");
+            { ModelState.AddModelError("Limit", "Magazine limit exceeded!"); }
 
+            //pobranie limitu oczekujących
+            int waitingTotal = 0;
+            foreach (var b in books)
+            {
+                waitingTotal += b.WaitingCount;
+            }
+            int waitingLimit = _context.Limits.FirstOrDefault().WaitingLimit;
 
             if (ModelState.IsValid)
             {
@@ -120,6 +127,56 @@ namespace ProjektBibliotekaMVC.Controllers
                     book.InMagazineCount++;
                     _context.Update(book);
                 }
+                _context.SaveChanges();
+
+                var queueItems = _context.Queues
+                    .Where(q => q.IdBook == book.Id)
+                    .OrderBy(q => q.Date)
+                    .ToList();
+
+                if (queueItems.Count() != 0)
+                {
+                    var bookCopies = _context.BooksCopies
+                    .Where(q => q.IdBook == book.Id && q.Status == "InMagazine")
+                    .ToList();
+
+                    int bookCopiesCount = bookCopies.Count();
+                    int queueItemsCount = queueItems.Count();
+                    int i = 0;
+
+                    while (i < bookCopiesCount && waitingTotal < waitingLimit && i < queueItemsCount)
+                    {
+                        var bookCopyHelp = bookCopies[i];
+
+                        var waiting = new WaitingBook();
+                        waiting.IdUser = queueItems[i].IdUser;
+                        waiting.IdBookCopy = bookCopyHelp.Id;
+                        waiting.Date = DateTime.Now;
+
+                        _context.Add(waiting);
+                        _context.Remove(queueItems[i]);
+
+                        // Update the status of the book copy
+                        bookCopyHelp.Status = "IsWaiting";
+
+                        book.WaitingCount++;
+                        book.InMagazineCount--;
+
+                        TempData["Message"] = "Jedna lub więcej książek zostało przypisanych kolejnym osobom w kolejce";
+
+                        i++;
+                        waitingTotal++;
+                    }
+
+                    // Update the status of all book copies in the list
+                    foreach (var copy in bookCopies)
+                    {
+                        _context.Update(copy);
+                    }
+
+                    _context.Update(book);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexForBook), new RouteValueDictionary(new { controller = "BookCopies", action = "IndexForBook", id = bookCopyAmount.IdBook }));
             }
