@@ -1,0 +1,28 @@
+﻿@model ProjektBibliotekaMVC.Models.Book
+
+<h2>Manage Tags for Book: @Model.Title</h2>
+
+<form asp-controller="Tags" asp-action="AddTagToBook" method="post" style="margin-bottom: 20px">
+    <div class="form-group">
+        <label for="tagName">Add Tag:</label>
+        <input type="text" name="tagName" class="form-control" required />
+        <input type="hidden" name="bookId" value="@Model.Id" />
+    </div>
+    <button type="submit" class="btn btn-primary">Dodaj tag</button>
+</form>
+
+@if (Model.Tags == null)
+{
+    <p>Brak tagów</p>
+}
+else
+{
+    <p>Ilość tagów: @Model.Tags.Count</p>
+}
+
+<ul>
+    @foreach (var tag in ViewBag.Tags)
+    {
+        <li>@tag.Name</li>
+    }
+</ul>

@@ -35,6 +35,30 @@ namespace BibliotekaMVC.Controllers
                           Problem("Entity set 'ApplicationDbContext.Books'  is null.");
         }
 
+        public async Task<IActionResult> ManageTags(int? id)
+        {
+            if (id == null || _context.Books == null)
+            {
+                return NotFound();
+            }
+
+            var bookEntity = await _context.Books
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (bookEntity == null)
+            {
+                return NotFound();
+            }
+
+            var bookWithTags = _context.Books
+                .Include(b => b.Tags)
+                .FirstOrDefault(b => b.Id == id);
+
+            ViewBag.Tags = bookWithTags.Tags;
+
+            return View("ManageTags", bookEntity);
+        }
+
         public async Task<IActionResult> BooksList(string searchString)
         {
             var books = _context.Books.ToList();
