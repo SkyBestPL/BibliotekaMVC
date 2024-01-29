@@ -27,14 +27,20 @@ namespace ProjektBibliotekaMVC.Controllers
             _context = context;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddTagToBook(int bookId, string tagName)
+        public async Task<IActionResult> Index()
         {
-            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+            var allTags = await _context.Tags.ToListAsync();
+
+            return View(allTags);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddTagToBook(int bookId, int tagId)
+        {
+            var tag = await _context.Tags.FindAsync(tagId);
             if (tag == null)
             {
-                tag = new Tag { Name = tagName };
-                _context.Tags.Add(tag);
+                return NotFound();
             }
 
             var book = await _context.Books.Include(b => b.Tags).FirstOrDefaultAsync(b => b.Id == bookId);
@@ -50,7 +56,147 @@ namespace ProjektBibliotekaMVC.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Books");
+            return RedirectToAction("ManageTags", "Books", new { id = bookId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveTagFromBook(int bookId, int tagId)
+        {
+            var tag = await _context.Tags.FindAsync(tagId);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _context.Books.Include(b => b.Tags).FirstOrDefaultAsync(b => b.Id == bookId);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var tagToRemove = book.Tags.FirstOrDefault(t => t.Id == tagId);
+            if (tagToRemove != null)
+            {
+                book.Tags.Remove(tagToRemove);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("ManageTags", "Books", new { id = bookId });
+        }
+
+        public IActionResult DeleteConfirmed()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var tag = await _context.Tags.FindAsync(id);
+
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            return View(tag);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var tag = await _context.Tags.FindAsync(id);
+
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            _context.Tags.Remove(tag);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Name")] Tag tag)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(tag);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(tag);
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tag = await _context.Tags.FindAsync(id);
+
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            return View(tag);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Tag tag)
+        {
+            if (id != tag.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existingTag = await _context.Tags.FindAsync(tag.Id);
+
+                    if (existingTag == null)
+                    {
+                        return NotFound();
+                    }
+
+                    existingTag.Name = tag.Name;
+
+                    _context.Update(existingTag);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TagExists(tag.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(tag);
+        }
+
+        private bool TagExists(int id)
+        {
+            return _context.Tags.Any(e => e.Id == id);
         }
     }
 }

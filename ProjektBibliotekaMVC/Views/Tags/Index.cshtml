@@ -1,0 +1,34 @@
+﻿@model List<ProjektBibliotekaMVC.Models.Tag>
+
+<h2>Tags</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tag in Model)
+        {
+            <tr>
+                <td>@tag.Name</td>
+                <td>
+                    <form asp-controller="Tags" asp-action="Edit" method="get" style="display: inline;">
+                        <input type="hidden" name="id" value="@tag.Id" />
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                    </form>
+                    <form asp-controller="Tags" asp-action="Delete" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="@tag.Id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-controller="Tags" asp-action="Create" method="get">
+    <button type="submit" class="btn btn-success">Create New Tag</button>
+</form>
