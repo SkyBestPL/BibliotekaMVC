@@ -27,11 +27,11 @@ namespace ProjektBibliotekaMVC.Data
                     l => l.HasOne(typeof(Tag)).WithMany().HasForeignKey("IdTag").HasPrincipalKey(nameof(Tag.Id)),
                     r => r.HasOne(typeof(Book)).WithMany().HasForeignKey("IdBook").HasPrincipalKey(nameof(Book.Id)),
                     j => j.HasKey("IdBook", "IdTag"));
-            modelBuilder.Entity<Book>()
-                .HasMany(e => e.BorrowsHistory)
-                .WithOne(e => e.Book)
-                .HasForeignKey(e => e.IdBook)
-                .IsRequired();
+            //modelBuilder.Entity<Book>()
+            //    .HasMany(e => e.BorrowsHistory)
+            //    .WithOne(e => e.Book)
+            //    .HasForeignKey(e => e.IdBook)
+            //    .IsRequired();
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(e => e.BorrowsHistory)
                 .WithOne(e => e.User)
@@ -77,11 +77,6 @@ namespace ProjektBibliotekaMVC.Data
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.IdUser)
                 .IsRequired();
-            //modelBuilder.Entity<Category>()
-            //    .HasMany(e => e.ChildCategories)
-            //    .WithOne(e => e.ParentCategory)
-            //    .HasForeignKey(e => e.IdParentCategory)
-            //    .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<BookCopy>()
                 .HasOne(e => e.WaitingBook)
                 .WithOne(e => e.BookCopy)
@@ -103,9 +98,9 @@ namespace ProjektBibliotekaMVC.Data
             modelBuilder.Entity<Role>(b =>
             {
                 b.HasMany(e => e.UserRoles)
-                    .WithOne(e => e.Role)
-                    .HasForeignKey(ur => ur.RoleId)
-                    .IsRequired();
+                .WithOne(e => e.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
             });
 
             Seed(modelBuilder);

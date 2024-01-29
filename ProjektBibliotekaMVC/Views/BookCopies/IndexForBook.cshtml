@@ -27,6 +27,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Borrow.User.Email)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -37,6 +40,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
+                <td>
+                    @{
+                        if (item.Borrow != null) @Html.DisplayFor(modelItem => item.Borrow.User.Email)
+                        else if (item.WaitingBook != null) @Html.DisplayFor(modelItem => item.WaitingBook.User.Email)
+                    }
+                </td>   
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@

@@ -31,7 +31,7 @@ namespace ProjektBibliotekaMVC.Controllers
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Borrows.Include(b => b.BookCopy).Include(b => b.User);
+            var applicationDbContext = _context.Borrows.Include(b => b.BookCopy).ThenInclude(b => b.Book).Include(b => b.User);
             return View(await applicationDbContext.ToListAsync());
         }
 

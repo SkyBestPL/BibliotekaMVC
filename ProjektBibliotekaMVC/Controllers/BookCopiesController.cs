@@ -34,7 +34,8 @@ namespace ProjektBibliotekaMVC.Controllers
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> IndexForBook(int id)
         {
-            var applicationDbContext = _context.BooksCopies.Include(b => b.Book).Where(u => u.IdBook == id);
+            var applicationDbContext = _context.BooksCopies.Include(b => b.Book).Where(u => u.IdBook == id)
+                .Include(u => u.Borrow).ThenInclude(u => u.User).Include(u => u.WaitingBook).ThenInclude(u => u.User);
             ViewBag.Id = id;
             Book book = await _context.Books.FindAsync(id);
             ViewBag.BookTitle = book.Title;
@@ -193,7 +194,8 @@ namespace ProjektBibliotekaMVC.Controllers
                 return NotFound();
             }
             var bookCopyAmount = new BookCopyInputModel();
-            var bookCopy = _context.BooksCopies.Where(u => u.Id == id).Include(u => u.WaitingBook).ThenInclude(u => u.User).Include(u => u.Borrow).ThenInclude(u => u.User).FirstOrDefault();
+            var bookCopy = _context.BooksCopies.Where(u => u.Id == id).Include(u => u.WaitingBook)
+                .ThenInclude(u => u.User).Include(u => u.Borrow).ThenInclude(u => u.User).FirstOrDefault();
             if (bookCopy == null)
             {
                 return NotFound();
@@ -318,8 +320,10 @@ namespace ProjektBibliotekaMVC.Controllers
                             _context.Add(borrow);
                             BorrowHistory borrowHistory = new BorrowHistory();
                             borrowHistory.Date = DateTime.Now;
-                            borrowHistory.IdUser= user.Id;
-                            borrowHistory.IdBook = bookCopy.IdBook;
+                            borrowHistory.IdUser = user.Id;
+                            borrowHistory.IdBook = book.Id;
+                            borrowHistory.BookTitle = book.Title;
+                            borrowHistory.BookISBN = book.ISBN;
                             _context.Add(borrowHistory);
                             book.BorrowedCount++;
                         }
@@ -330,16 +334,16 @@ namespace ProjektBibliotekaMVC.Controllers
                         }
                         else if (bookCopyAmount.Status == SD.BookIsWaiting && queueItem == null)
                         {
-                            if (user == null)
-                                return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
+                            //if (user == null)
+                            //    return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
                             var waitingBook = _context.WaitingBook.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
                             _context.Remove(waitingBook);
                             book.WaitingCount--;
                         }
                         else if (bookCopyAmount.Status == SD.BookIsBorrowed && queueItem == null)
                         {
-                            if (user == null)
-                                return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
+                            //if (user == null)
+                            //    return RedirectToAction(nameof(Edit), new RouteValueDictionary(new { controller = "BookCopies", action = "Edit", id = bookCopy.Id }));
                             var borrow = _context.Borrows.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
                             _context.Remove(borrow);
                             book.BorrowedCount--;

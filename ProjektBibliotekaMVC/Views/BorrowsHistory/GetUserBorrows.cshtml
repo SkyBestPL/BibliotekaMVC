@@ -11,7 +11,10 @@
                 @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Book)
+                @Html.DisplayNameFor(model => model.BookTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BookISBN)
             </th>
             <th></th>
         </tr>
@@ -24,10 +27,13 @@
                     @Html.DisplayFor(modelItem => item.Date)
                     </td>
                     <td>
-                    @Html.DisplayFor(modelItem => item.Book.Title)
+                    @Html.DisplayFor(modelItem => item.BookTitle)
                     </td>
                     <td>
-                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Book.Id">Details</a>
+                    @Html.DisplayFor(modelItem => item.BookISBN)
+                    </td>
+                    <td>
+                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.IdBook">Details</a>
                     </td>
                 </tr>
         }

@@ -58,6 +58,7 @@ namespace ProjektBibliotekaMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Body,Date")] News news)
         {
+               news.Date = DateTime.Now;
             if (ModelState.IsValid)
             {
                 _context.Add(news);
@@ -95,6 +96,7 @@ namespace ProjektBibliotekaMVC.Controllers
                 return NotFound();
             }
 
+            news.Date = DateTime.Now;
             if (ModelState.IsValid)
             {
                 try

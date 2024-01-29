@@ -24,7 +24,7 @@ namespace ProjektBibliotekaMVC.Controllers
         {
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
             var id = _userManager.GetUserId(User);
-            return View(await _context.BorrowsHistory.Where(u => u.IdUser == id).Include(b => b.Book).ToListAsync());
+            return View(await _context.BorrowsHistory.Where(u => u.IdUser == id).ToListAsync());
         }
     }
 }

@@ -26,8 +26,10 @@ namespace ProjektBibliotekaMVC.Controllers
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Index()
         {
-              return _context.WaitingBook != null ? 
-                          View(await _context.WaitingBook.ToListAsync()) :
+            var waitingBooks = _context.WaitingBook.Include(b => b.BookCopy).ThenInclude(b => b.Book).Include(b => b.User);
+
+            return waitingBooks != null ? 
+                          View(await waitingBooks.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.WaitingBook'  is null.");
         }
 
