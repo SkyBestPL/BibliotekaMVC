@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -50,11 +51,22 @@ namespace BibliotekaMVC.Controllers
                 return NotFound();
             }
 
-            var bookWithTags = _context.Books
+            var book = await _context.Books
                 .Include(b => b.Tags)
-                .FirstOrDefault(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id);
 
-            ViewBag.Tags = bookWithTags.Tags;
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var allTags = await _context.Tags.ToListAsync();
+
+            var bookTags = book.Tags.ToList();
+
+            var unassignedTags = allTags.Except(bookTags).ToList();
+
+            ViewBag.AllTags = unassignedTags;
 
             return View("ManageTags", bookEntity);
         }

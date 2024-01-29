@@ -1,28 +1,53 @@
 ﻿@model ProjektBibliotekaMVC.Models.Book
 
-<h2>Manage Tags for Book: @Model.Title</h2>
+<h2>Manage Tags for: "@Model.Title"</h2>
 
-<form asp-controller="Tags" asp-action="AddTagToBook" method="post" style="margin-bottom: 20px">
-    <div class="form-group">
-        <label for="tagName">Add Tag:</label>
-        <input type="text" name="tagName" class="form-control" required />
-        <input type="hidden" name="bookId" value="@Model.Id" />
+<div class="d-flex" style="margin-top: 20px">
+    <form asp-controller="Tags" asp-action="AddTagToBook" method="post" style="margin-right: 20px;">
+        <div class="form-group" style="margin-bottom: 10px">
+            <label for="tagSelect">Add Tag:</label>
+            <select name="tagId" class="form-control" required>
+                <option value="">-- Select Tag --</option>
+                @foreach (var tag in ViewBag.AllTags)
+                {
+                    <option value="@tag.Id">@tag.Name</option>
+                }
+            </select>
+            <input type="hidden" name="bookId" value="@Model.Id" />
+        </div>
+        <button type="submit" class="btn btn-primary">Add Tag</button>
+    </form>
+
+    <form asp-controller="Tags" asp-action="RemoveTagFromBook" method="post" style="margin-right: 20px">
+        <div class="form-group" style="margin-bottom: 10px">
+            <label for="removeTagSelect">Remove Tag:</label>
+            <select name="tagId" class="form-control" required>
+                <option value="">-- Select Tag --</option>
+                @foreach (var tag in Model.Tags)
+                {
+                    <option value="@tag.Id">@tag.Name</option>
+                }
+            </select>
+            <input type="hidden" name="bookId" value="@Model.Id" />
+        </div>
+        <button type="submit" class="btn btn-danger">Remove Tag</button>
+    </form>
+
+    <div>
+        @if (Model.Tags == null || Model.Tags.Count == 0)
+        {
+            <p>No tags assigned</p>
+        }
+        else
+        {
+            <p>List of assigned tags (@Model.Tags.Count):</p>
+        }
+
+        <ul>
+            @foreach (var tag in Model.Tags)
+            {
+                <li>@tag.Name</li>
+            }
+        </ul>
     </div>
-    <button type="submit" class="btn btn-primary">Dodaj tag</button>
-</form>
-
-@if (Model.Tags == null)
-{
-    <p>Brak tagów</p>
-}
-else
-{
-    <p>Ilość tagów: @Model.Tags.Count</p>
-}
-
-<ul>
-    @foreach (var tag in ViewBag.Tags)
-    {
-        <li>@tag.Name</li>
-    }
-</ul>
+</div>
