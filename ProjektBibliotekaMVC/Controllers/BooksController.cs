@@ -71,28 +71,36 @@ namespace BibliotekaMVC.Controllers
             return View("ManageTags", bookEntity);
         }
 
-        public async Task<IActionResult> BooksList(string searchString)
+        public async Task<IActionResult> BooksList(string? searchString, int? selectedTag)
         {
-            var books = _context.Books.ToList();
+            var books = _context.Books.Include(b => b.Tags).ToList();
             var user = await _userManager.GetUserAsync(User);
-            if(user != null)
+
+            if (user != null)
             {
                 ViewBag.UserId = user.Id;
             }
 
+            var tags = _context.Tags.ToList();
+
+            ViewBag.Tags = new SelectList(tags, "Id", "Name", selectedTag);
+
             if (!string.IsNullOrEmpty(searchString))
             {
-                books = books.Where(b => 
-                b.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                (b.AuthorName + " " + b.AuthorSurename).Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                b.ISBN.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+                books = books.Where(b =>
+                    b.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (b.AuthorName + " " + b.AuthorSurename).Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    b.ISBN.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            return View(books);
+            if (selectedTag.HasValue)
+            {
+                books = books.Where(b => b.Tags.Any(t => t.Id == selectedTag)).ToList();
+            }
 
-            /*return _context.Books != null ?
-                        View(await _context.Books.ToListAsync()) :
-                        Problem("Entity set 'ApplicationDbContext.Books'  is null.");*/
+            ViewData["SelectedTag"] = selectedTag;
+
+            return View(books);
         }
 
         // GET: Books/Details/5
