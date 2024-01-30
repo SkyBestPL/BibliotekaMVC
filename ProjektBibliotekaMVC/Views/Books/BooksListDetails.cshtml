@@ -1,0 +1,20 @@
+﻿@model ProjektBibliotekaMVC.Models.Book
+@{
+    ViewData["Title"] = "BooksListDetails";
+}
+
+<li class="book-item">
+    <div style="font-size: 17px" class="book-info">
+        <h2>@ViewBag.BookTitle</h2>
+        <p><strong>Autor:</strong> @ViewBag.Author</p>
+        <p><strong>Opis książki:</strong> @ViewBag.Contents</p>
+        <p><strong>Numer ISBN:</strong> @ViewBag.ISBN</p>
+        <p><strong>Kategoria:</strong> @ViewBag.Category</p>
+        <p><strong>Tagi:</strong> @string.Join(", ", ViewBag.Tags)</p>
+    </div>
+    <div class="book-image-big">
+        <img src="@Url.Content("~/Images/" + @Model.Title + ".png")" alt="Obrazek książki" style="max-width: 100%; max-height: 100%;">
+    </div>
+</li>
+
+<a class="to-cart-button" asp-action="BooksList">Powrót</a>

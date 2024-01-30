@@ -79,7 +79,13 @@ book-list-2 {
 
 .book-image {
     flex: 1;
-    max-width: 200px;
+    max-width: 160px;
+    margin-left: 20px;
+}
+
+.book-image-big {
+    flex: 1;
+    max-width: 300px;
     margin-left: 20px;
 }
 

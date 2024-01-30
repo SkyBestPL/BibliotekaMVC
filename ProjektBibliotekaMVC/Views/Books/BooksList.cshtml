@@ -9,7 +9,7 @@
 <h1 class="margin-bottom-small text-center">Nasze Książki</h1>
 
 <ul class="book-list-2">
-    <form method="get" action="@Url.Action("BooksList", "Books")">
+    <form style="margin-bottom: 10px;" method="get" action="@Url.Action("BooksList", "Books")">
         <input type="text" name="searchString" placeholder="Wyszukaj książkę...">
 
         <select name="selectedTag">
@@ -31,10 +31,10 @@
 
         List<Queue> queues = _context.Queues
         .Where(bc => bc.IdBook == item.Id)
+        .OrderBy(q => q.Date)
         .ToList();
 
-        var queue = _context.Queues
-        .FirstOrDefault(q => q.IdBook == item.Id && q.IdUser == userId);
+        var queue = queues.FindIndex(q => q.IdUser == userId) + 1;
 
         bool cart=false;
         foreach (var book in bookCopies)
@@ -52,30 +52,65 @@
             <div class="book-info">
                 <div>
                     <p><strong>@Html.DisplayFor(modelItem => item.Title)</strong></p>
-                    <p>Opis książki: <br> @Html.DisplayFor(modelItem => item.Contents)</p>
                     <p>Autor: @Html.DisplayFor(modelItem => item.AuthorName) @Html.DisplayFor(modelItem => item.AuthorSurename)</p>
-                    <p>Kategoria: @Html.DisplayFor(modelItem => item.IdCategory)</p>
-                    <p>Numer ISBN: @Html.DisplayFor(modelItem => item.ISBN)</p>
+                    <p>Opis książki: <br> @Html.DisplayFor(modelItem => item.Contents)</p>
                     @if (item.InMagazineCount > 0 && cart == false)
                     {
                         var isInCart = _context.Carts.FirstOrDefault(c => c.IdBook == item.Id && c.IdUser == userId);
                         if (isInCart == null)
                         {
-                            <form method="post" action="@Url.Action("AddToCart", "Books")">
-                                <input type="hidden" name="bookId" value="@item.Id" />
-                                <button type="submit" class="button-tocart">Dodaj do koszyka</button>
-                            </form>
+                            <table>
+                                <tr>
+                                    <td style="width: 180px;">
+                                        <form method="post" action="@Url.Action("AddToCart", "Books")">
+                                            <input type="hidden" name="bookId" value="@item.Id" />
+                                            <button type="submit" class="button-tocart">Dodaj do koszyka</button>
+                                        </form>
+                                    </td>
+                                    <td style="width: 120px; padding-left: 10px;">
+                                        <form method="post" action="@Url.Action("BooksListDetails", "Books")">
+                                            <input type="hidden" name="bookId" value="@item.Id" />
+                                            <button type="submit" class="button-tocart" style="background-color: #ffae00; padding: 5px 10px; width: 100%;">Szczegóły</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </table>
                         }
                         else
                         {
-                            <button disabled style="background-color: lightgreen; cursor: not-allowed;">Książka w koszyku</button>
+                             <table>
+                                <tr>
+                                    <td style="width: 150px;">
+                                        <button disabled style="background-color: lightgreen; cursor: not-allowed;">Książka w koszyku</button>
+                                    </td>
+                                    <td style="width: 120px; padding-left: 10px;">
+                                        <form method="post" action="@Url.Action("BooksListDetails", "Books")">
+                                            <input type="hidden" name="bookId" value="@item.Id" />
+                                            <button type="submit" class="button-tocart" style="background-color: #ffae00; padding: 5px 10px; width: 100%;">Szczegóły</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                             </table>
+
                         }
                     }
                     else if(cart==true)
                     {
-                        <button disabled style="background-color: palevioletred; cursor: not-allowed;">Wypożyczono</button>
+                        <table>
+                            <tr>
+                                <td style="width: 100px;">
+                                    <button disabled style="background-color: palevioletred; cursor: not-allowed;">Wypożyczono</button>
+                                </td>
+                                <td style="width: 120px; padding-left: 10px;">
+                                    <form method="post" action="@Url.Action("BooksListDetails", "Books")">
+                                        <input type="hidden" name="bookId" value="@item.Id" />
+                                        <button type="submit" class="button-tocart" style="background-color: #ffae00; padding: 5px 10px; width: 100%;">Szczegóły</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
                     }
-                    else if(cart == false && queue == null)
+                    else if(cart == false && (queue == 0 || queue == -1))
                     {
                         <table>
                             <tr>
@@ -86,6 +121,12 @@
                                     <form method="post" action="@Url.Action("AddToQueue", "Books")">
                                         <input type="hidden" name="bookId" value="@item.Id" />
                                         <button type="submit" class="button-tocart" style="background-color: #426AF4; padding: 5px 10px; width: 100%;">Zapisz się do kolejki</button>
+                                    </form>
+                                </td>
+                                <td style="width: 120px; padding-left: 10px;">
+                                    <form method="post" action="@Url.Action("BooksListDetails", "Books")">
+                                        <input type="hidden" name="bookId" value="@item.Id" />
+                                        <button type="submit" class="button-tocart" style="background-color: #ffae00; padding: 5px 10px; width: 100%;">Szczegóły</button>
                                     </form>
                                 </td>
                             </tr>
@@ -99,7 +140,13 @@
                                     <button disabled style="background-color: grey; cursor: not-allowed; width: 100%;">Niedostępne</button>
                                 </td>
                                 <td style="width: 130px;">
-                                    <button disabled style="background-color: lightskyblue; cursor: not-allowed; width: 100%;">W kolejce</button>
+                                    <button disabled style="background-color: lightskyblue; cursor: not-allowed; width: 100%;">W kolejce (@queue)</button>
+                                </td>
+                                <td style="width: 120px; padding-left: 10px;">
+                                    <form method="post" action="@Url.Action("BooksListDetails", "Books")">
+                                        <input type="hidden" name="bookId" value="@item.Id" />
+                                        <button type="submit" class="button-tocart" style="background-color: #ffae00; padding: 5px 10px; width: 100%;">Szczegóły</button>
+                                    </form>
                                 </td>
                             </tr>
                         </table>

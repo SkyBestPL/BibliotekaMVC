@@ -27,7 +27,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Strona Główna</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="BooksList">Przegląd Książek (User)</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="BooksList">Przegląd Książek</a>
                         </li>
                         @{if (User.Identity.IsAuthenticated) 
                             {
@@ -46,9 +46,9 @@
                                             {
                                                 if (User.IsInRole(SD.RoleUserAdmin) || User.IsInRole(SD.RoleUserEmployee))
                                                 {
-                                                    <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Przegląd Książek (Admin)</a>
+                                                    <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Zarządzanie książkami</a>
                                                     <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="CustomersIndex">Klienci</a>
-                                                    <a class="nav-link text-dark" asp-area="" asp-controller="WaitingBooks" asp-action="Index">Ksiazki oczekujace na odbior</a>
+                                                    <a class="nav-link text-dark" asp-area="" asp-controller="WaitingBooks" asp-action="Index">Książki oczekujace na odbior</a>
                                                     <a class="nav-link text-dark" asp-area="" asp-controller="Borrows" asp-action="Index">Wypożyczenia</a>
                                                 }
                                                 if (User.IsInRole(SD.RoleUserAdmin))

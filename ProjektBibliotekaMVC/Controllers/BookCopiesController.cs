@@ -36,12 +36,16 @@ namespace ProjektBibliotekaMVC.Controllers
         {
             var applicationDbContext = _context.BooksCopies.Include(b => b.Book).Where(u => u.IdBook == id)
                 .Include(u => u.Borrow).ThenInclude(u => u.User).Include(u => u.WaitingBook).ThenInclude(u => u.User);
+
+            int queueCount = _context.Queues.Count(q => q.IdBook == id);
+
             ViewBag.Id = id;
             Book book = await _context.Books.FindAsync(id);
             ViewBag.BookTitle = book.Title;
             ViewBag.InMagazineCount = book.InMagazineCount;
             ViewBag.WaitingCount = book.WaitingCount;
             ViewBag.BorrowedCount = book.BorrowedCount;
+            ViewBag.QueueCount = queueCount;
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -285,6 +289,7 @@ namespace ProjektBibliotekaMVC.Controllers
                                 {
                                     var waitingDel = _context.WaitingBook.FirstOrDefault(u => u.IdBookCopy == bookCopy.Id);
                                     _context.Remove(waitingDel);
+                                    book.WaitingCount--;
                                 }
 
                                 var waiting = new WaitingBook();

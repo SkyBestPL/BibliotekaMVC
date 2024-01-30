@@ -103,6 +103,27 @@ namespace BibliotekaMVC.Controllers
             return View(books);
         }
 
+        public async Task<IActionResult> BooksListDetails(int bookId)
+        {
+            var book = await _context.Books
+                .Include(b => b.Tags)
+                .FirstOrDefaultAsync(b => b.Id == bookId);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.BookTitle = book.Title;
+            ViewBag.Author = $"{book.AuthorName} {book.AuthorSurename}";
+            ViewBag.Contents = book.Contents;
+            ViewBag.ISBN = book.ISBN;
+            ViewBag.Category = book.IdCategory;
+            ViewBag.Tags = book.Tags.Select(t => t.Name).ToList();
+
+            return View(book);
+        }
+
         // GET: Books/Details/5
         [Authorize(Roles = SD.RoleUserAdmin + "," + SD.RoleUserEmployee)]
         public async Task<IActionResult> Details(int? id)
