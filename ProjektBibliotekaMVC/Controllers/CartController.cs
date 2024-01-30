@@ -64,7 +64,6 @@ namespace ProjektBibliotekaMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(List<int> bookId)
         {
-
             var user = await _userManager.GetUserAsync(User);
 
             var books = _context.Books.ToList();
@@ -74,11 +73,11 @@ namespace ProjektBibliotekaMVC.Controllers
                 waitingTotal += b.WaitingCount;
             }
             int waitingLimit = _context.Limits.FirstOrDefault().WaitingLimit;
-            if (waitingTotal + bookId.Count > waitingLimit) 
+            if (waitingTotal + bookId.Count > waitingLimit)
             {
                 ViewBag.WaitingLimitExceeded = "Waiting limit exceeded!";
                 return RedirectToAction(nameof(Checkout));
-            }            
+            }
 
             foreach (var id in bookId)
             {
@@ -93,8 +92,6 @@ namespace ProjektBibliotekaMVC.Controllers
                     var reservedCopy = _context.BooksCopies.Find(firstAvailableCopyId);
                     var reservedBook = _context.Books.Find(id);
                     reservedCopy.Status = "IsWaiting";
-                    //reservedCopy.Book.InMagazineCount--;
-                    //reservedCopy.Book.WaitingCount++;
                     reservedBook.InMagazineCount--;
                     reservedBook.WaitingCount++;
                     _context.SaveChanges();
@@ -104,7 +101,7 @@ namespace ProjektBibliotekaMVC.Controllers
                         IdBookCopy = firstAvailableCopyId,
                         IdUser = User.FindFirstValue(ClaimTypes.NameIdentifier),
                         Date = DateTime.Now,
-                        BookCopy = reservedCopy, //tutaj przypisuję BookCopy ale później i tak jest null
+                        BookCopy = reservedCopy,
                         User = user
                     };
 
@@ -115,17 +112,11 @@ namespace ProjektBibliotekaMVC.Controllers
                     await _context.SaveChangesAsync();
 
                     var cartItem = await _context.Carts
-                    .FirstOrDefaultAsync(ci => ci.IdBook == reservedCopy.IdBook && ci.IdUser == user.Id);
+                        .FirstOrDefaultAsync(ci => ci.IdBook == reservedCopy.IdBook && ci.IdUser == user.Id);
 
                     _context.Carts.Remove(cartItem);
 
                     await _context.SaveChangesAsync();
-
-                    return RedirectToAction("Cart");
-                }
-                else
-                {
-                    return RedirectToAction("Cart");
                 }
             }
 
